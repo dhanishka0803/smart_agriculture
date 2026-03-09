@@ -2,11 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 from datetime import datetime, timedelta
-import pickle
-import numpy as np
 import os
-from pymongo import MongoClient
-import redis
 import json
 
 app = Flask(__name__)
@@ -17,21 +13,7 @@ OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', 'your_api_key_here')
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 
-# Database connections (optional - disabled for speed)
-try:
-    mongo_client = None
-    db = None
-    redis_client = None
-except:
-    db = None
-    redis_client = None
-
-# Load ML model
-try:
-    with open('../ml_model/crop_model.pkl', 'rb') as f:
-        crop_model = pickle.load(f)
-except:
-    crop_model = None
+# No database or ML model needed for demo
 
 # Crop database
 CROPS_DATA = {
@@ -58,14 +40,6 @@ def health_check():
 def get_weather():
     lat = request.args.get('lat', '11.0168')
     lon = request.args.get('lon', '76.9558')
-    
-    cache_key = f"weather:{lat}:{lon}"
-    
-    # Check cache
-    if redis_client:
-        cached = redis_client.get(cache_key)
-        if cached:
-            return jsonify(json.loads(cached))
     
     try:
         # Current weather
@@ -119,10 +93,6 @@ def get_weather():
                 'description': data['description'],
                 'icon': data['icon']
             })
-        
-        # Cache for 30 minutes
-        if redis_client:
-            redis_client.setex(cache_key, 1800, json.dumps(weather_result))
         
         return jsonify(weather_result)
     
