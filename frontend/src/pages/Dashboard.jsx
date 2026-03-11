@@ -101,8 +101,11 @@ function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Location and Time */}
-      <div className="card">
-        <div className="flex items-center justify-between">
+      <div className="card relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80" alt="Farm" className="w-full h-full object-cover" />
+        </div>
+        <div className="flex items-center justify-between relative z-10">
           <div>
             <h2 className="text-2xl font-bold text-gray-800">{location.name}</h2>
             <p className="text-gray-600">{formatDate(currentTime)}</p>

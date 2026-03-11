@@ -4,6 +4,7 @@ import requests
 from datetime import datetime, timedelta
 import os
 import json
+from groq import Groq
 
 app = Flask(__name__)
 # Allow both production and local frontend URLs
@@ -15,8 +16,15 @@ CORS(app, origins=[
 
 # Configuration
 OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', 'your_api_key_here')
+GROQ_API_KEY = os.getenv('GROQ_API_KEY', 'gsk_your_key_here')
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/')
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+
+# Initialize Groq client
+try:
+    groq_client = Groq(api_key=GROQ_API_KEY)
+except:
+    groq_client = None
 
 # No database or ML model needed for demo
 
@@ -400,6 +408,106 @@ def profit_estimate():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
+
+# AI Chatbot Endpoint with Groq LLM
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    """
+    AI Chatbot powered by Groq LLM (Llama 3 70B)
+    """
+    data = request.json
+    user_message = data.get('message', '')
+    history = data.get('history', [])
+    
+    if not user_message:
+        return jsonify({'error': 'No message provided'}), 400
+    
+    try:
+        if groq_client:
+            # Build conversation history
+            messages = [
+                {
+                    "role": "system",
+                    "content": """You are an expert agricultural AI assistant for AgriSense AI platform. 
+                    You help farmers with:
+                    - Crop recommendations based on soil, climate, and season
+                    - Pest and disease management
+                    - Irrigation and water management
+                    - Market prices and profit estimation
+                    - Sustainable farming practices
+                    - Weather-based farming advice
+                    
+                    Provide practical, actionable advice in simple language. 
+                    Be concise but thorough. Use bullet points when listing steps.
+                    Always consider Indian farming context and conditions."""
+                }
+            ]
+            
+            # Add conversation history
+            for msg in history[-6:]:
+                messages.append({
+                    "role": msg['role'],
+                    "content": msg['content']
+                })
+            
+            # Add current message
+            messages.append({
+                "role": "user",
+                "content": user_message
+            })
+            
+            # Call Groq API
+            chat_completion = groq_client.chat.completions.create(
+                messages=messages,
+                model="llama-3.1-70b-versatile",
+                temperature=0.7,
+                max_tokens=1024,
+                top_p=0.9
+            )
+            
+            response_text = chat_completion.choices[0].message.content
+            
+            return jsonify({
+                'success': True,
+                'response': response_text,
+                'model': 'llama-3.1-70b-versatile'
+            })
+        else:
+            # Fallback responses if Groq is not configured
+            fallback_responses = {
+                'crop': "For crop recommendations, I suggest considering: \n• Soil type (loamy, clayey, sandy)\n• Current season (Kharif, Rabi, Zaid)\n• Expected rainfall\n• Temperature range\n\nUse our Crop Recommendation tool for AI-powered suggestions!",
+                'pest': "For pest management:\n• Regular field monitoring\n• Use neem-based organic pesticides\n• Maintain crop rotation\n• Remove infected plants immediately\n• Consult local agricultural extension officers",
+                'irrigation': "Smart irrigation tips:\n• Check soil moisture before watering\n• Water early morning or evening\n• Use drip irrigation to save 40% water\n• Monitor weather forecasts\n• Adjust based on crop growth stage",
+                'market': "For market information:\n• Check local mandi prices daily\n• Use our Market Predictor tool\n• Consider storage options for better prices\n• Join farmer cooperatives\n• Track seasonal demand patterns",
+                'default': "I can help you with:\n• Crop selection and recommendations\n• Pest and disease management\n• Irrigation scheduling\n• Market prices and trends\n• Weather-based farming advice\n\nWhat specific topic would you like to know more about?"
+            }
+            
+            # Simple keyword matching
+            message_lower = user_message.lower()
+            if any(word in message_lower for word in ['crop', 'plant', 'grow', 'sow']):
+                response = fallback_responses['crop']
+            elif any(word in message_lower for word in ['pest', 'disease', 'insect', 'bug']):
+                response = fallback_responses['pest']
+            elif any(word in message_lower for word in ['water', 'irrigat', 'moisture']):
+                response = fallback_responses['irrigation']
+            elif any(word in message_lower for word in ['price', 'market', 'sell', 'profit']):
+                response = fallback_responses['market']
+            else:
+                response = fallback_responses['default']
+            
+            return jsonify({
+                'success': True,
+                'response': response,
+                'model': 'fallback'
+            })
+            
+    except Exception as e:
+        print(f"Chat error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to process your message. Please try again.'
+        }), 500
 
 
 # Disease Detection Endpoint

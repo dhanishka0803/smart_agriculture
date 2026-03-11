@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { MessageCircle, Send, Bot, User, Loader } from 'lucide-react';
+import { Send, Bot, User, Loader } from 'lucide-react';
 
-export default function AIChatbot() {
-  const { t } = useTranslation();
+function AIChatbot() {
   const [messages, setMessages] = useState([
-    { id: 1, type: 'bot', text: t('chatbot.welcome') }
+    {
+      role: 'assistant',
+      content: 'Hello! I\'m your AgriSense AI assistant. I can help you with crop recommendations, pest management, irrigation advice, market prices, and farming best practices. How can I assist you today?'
+    }
   ]);
   const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -19,128 +20,87 @@ export default function AIChatbot() {
     scrollToBottom();
   }, [messages]);
 
-  const getBotResponse = (userMessage) => {
-    const msg = userMessage.toLowerCase();
-    
-    // Weather queries
-    if (msg.includes('weather') || msg.includes('rain') || msg.includes('temperature')) {
-      return t('chatbot.weatherResponse');
-    }
-    
-    // Crop queries
-    if (msg.includes('crop') || msg.includes('plant') || msg.includes('grow')) {
-      return t('chatbot.cropResponse');
-    }
-    
-    // Pest/disease
-    if (msg.includes('pest') || msg.includes('disease') || msg.includes('insect')) {
-      return t('chatbot.pestResponse');
-    }
-    
-    // Fertilizer
-    if (msg.includes('fertilizer') || msg.includes('nutrient') || msg.includes('soil')) {
-      return t('chatbot.fertilizerResponse');
-    }
-    
-    // Irrigation
-    if (msg.includes('water') || msg.includes('irrigation') || msg.includes('drip')) {
-      return t('chatbot.irrigationResponse');
-    }
-    
-    // Market price
-    if (msg.includes('price') || msg.includes('market') || msg.includes('sell')) {
-      return t('chatbot.priceResponse');
-    }
-    
-    // Subsidy/loan
-    if (msg.includes('subsidy') || msg.includes('loan') || msg.includes('scheme')) {
-      return t('chatbot.subsidyResponse');
-    }
-    
-    return t('chatbot.defaultResponse');
-  };
+  const handleSend = async () => {
+    if (!input.trim() || loading) return;
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-
-    const userMessage = { id: Date.now(), type: 'user', text: input };
-    setMessages(prev => [...prev, userMessage]);
+    const userMessage = input.trim();
     setInput('');
-    setIsTyping(true);
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setLoading(true);
 
-    setTimeout(() => {
-      const botResponse = {
-        id: Date.now() + 1,
-        type: 'bot',
-        text: getBotResponse(input)
-      };
-      setMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1000);
+    try {
+      const response = await fetch('https://smart-agriculture-4pz4.onrender.com/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMessage,
+          history: messages.slice(-10)
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      } else {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'I apologize, but I\'m having trouble connecting right now. Please try again in a moment.' 
+        }]);
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'I\'m currently offline. Please check your connection and try again.' 
+      }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const quickQuestions = [
-    t('chatbot.q1'),
-    t('chatbot.q2'),
-    t('chatbot.q3'),
-    t('chatbot.q4')
+    'What crops should I plant this season?',
+    'How do I prevent pest attacks?',
+    'When should I irrigate my crops?',
+    'What are current market prices?'
   ];
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-        {/* Header */}
-        <div className="gradient-bg text-white p-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <Bot className="w-7 h-7" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">{t('chatbot.title')}</h1>
-              <p className="text-green-100">{t('chatbot.subtitle')}</p>
-            </div>
-          </div>
-        </div>
+    <div className="space-y-6">
+      <div className="gradient-bg text-white rounded-xl p-6">
+        <h2 className="text-3xl font-bold mb-2">AI Farming Assistant</h2>
+        <p className="text-green-100">Get instant answers to all your farming questions powered by advanced AI</p>
+      </div>
 
-        {/* Chat Messages */}
-        <div className="h-[500px] overflow-y-auto p-6 bg-gray-50">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex items-start space-x-3 mb-4 ${
-                msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-              }`}
-            >
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  msg.type === 'bot' ? 'bg-green-100' : 'bg-sky-100'
-                }`}
-              >
-                {msg.type === 'bot' ? (
-                  <Bot className="w-5 h-5 text-green-600" />
-                ) : (
-                  <User className="w-5 h-5 text-sky-600" />
-                )}
-              </div>
-              <div
-                className={`max-w-[70%] p-4 rounded-2xl ${
-                  msg.type === 'bot'
-                    ? 'bg-white shadow-md'
-                    : 'bg-gradient-to-r from-green-600 to-sky-500 text-white'
-                }`}
-              >
-                <p className="text-sm leading-relaxed">{msg.text}</p>
+      <div className="card h-[600px] flex flex-col">
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto space-y-4 mb-4 p-4">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`flex items-start space-x-2 max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`p-2 rounded-full ${msg.role === 'user' ? 'bg-primary' : 'bg-secondary'}`}>
+                  {msg.role === 'user' ? (
+                    <User className="w-5 h-5 text-white" />
+                  ) : (
+                    <Bot className="w-5 h-5 text-white" />
+                  )}
+                </div>
+                <div className={`p-4 rounded-lg ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-800'}`}>
+                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                </div>
               </div>
             </div>
           ))}
-
-          {isTyping && (
-            <div className="flex items-start space-x-3 mb-4">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <Bot className="w-5 h-5 text-green-600" />
-              </div>
-              <div className="bg-white shadow-md p-4 rounded-2xl">
-                <Loader className="w-5 h-5 text-gray-400 animate-spin" />
+          {loading && (
+            <div className="flex justify-start">
+              <div className="flex items-start space-x-2">
+                <div className="p-2 rounded-full bg-secondary">
+                  <Bot className="w-5 h-5 text-white" />
+                </div>
+                <div className="p-4 rounded-lg bg-gray-100">
+                  <Loader className="w-5 h-5 animate-spin text-primary" />
+                </div>
               </div>
             </div>
           )}
@@ -148,36 +108,39 @@ export default function AIChatbot() {
         </div>
 
         {/* Quick Questions */}
-        <div className="px-6 py-3 bg-white border-t">
-          <p className="text-sm text-gray-600 mb-2">{t('chatbot.quickQuestions')}</p>
-          <div className="flex flex-wrap gap-2">
-            {quickQuestions.map((q, i) => (
-              <button
-                key={i}
-                onClick={() => setInput(q)}
-                className="text-xs bg-green-50 text-green-700 px-3 py-1.5 rounded-full hover:bg-green-100 transition-colors"
-              >
-                {q}
-              </button>
-            ))}
+        {messages.length === 1 && (
+          <div className="mb-4 px-4">
+            <p className="text-sm text-gray-600 mb-2">Quick questions:</p>
+            <div className="grid grid-cols-2 gap-2">
+              {quickQuestions.map((q, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setInput(q)}
+                  className="text-left text-sm p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Input */}
-        <div className="p-4 bg-white border-t">
-          <div className="flex space-x-3">
+        <div className="border-t pt-4 px-4">
+          <div className="flex space-x-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-              placeholder={t('chatbot.placeholder')}
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Ask me anything about farming..."
+              className="flex-1 input-field"
+              disabled={loading}
             />
             <button
               onClick={handleSend}
-              disabled={!input.trim()}
-              className="bg-gradient-to-r from-green-600 to-sky-500 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!input.trim() || loading}
+              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="w-5 h-5" />
             </button>
@@ -187,3 +150,5 @@ export default function AIChatbot() {
     </div>
   );
 }
+
+export default AIChatbot;

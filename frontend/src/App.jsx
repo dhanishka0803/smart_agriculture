@@ -20,6 +20,7 @@ import ClimateMap from './pages/ClimateMap';
 import SoilHealthScanner from './pages/SoilHealthScanner';
 import MarketPredictor from './pages/MarketPredictor';
 import CommunityForum from './pages/CommunityForum';
+import DiseaseDetection from './pages/DiseaseDetection';
 import './utils/i18n';
 
 function ProtectedRoute({ children }) {
@@ -79,6 +80,7 @@ function AppContent() {
             <Route path="/profit" element={<ProtectedRoute><ProfitCalculator /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/ai-chatbot" element={<ProtectedRoute><AIChatbot /></ProtectedRoute>} />
+            <Route path="/disease-detection" element={<ProtectedRoute><DiseaseDetection /></ProtectedRoute>} />
             <Route path="/risk-predictor" element={<ProtectedRoute><RiskPredictor /></ProtectedRoute>} />
             <Route path="/climate-map" element={<ProtectedRoute><ClimateMap /></ProtectedRoute>} />
             <Route path="/soil-scanner" element={<ProtectedRoute><SoilHealthScanner /></ProtectedRoute>} />

@@ -122,6 +122,9 @@ function LandingPage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80" alt="Agriculture" className="w-full h-full object-cover opacity-20" />
+        </div>
         <div className="absolute inset-0 gradient-bg opacity-10"></div>
         <div className="container mx-auto px-4 py-20 relative z-10">
           <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
@@ -181,8 +184,11 @@ function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="py-20 relative">
+        <div className="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1920&q=80" alt="Smart Farming" className="w-full h-full object-cover opacity-5" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
               Everything You Need to Succeed

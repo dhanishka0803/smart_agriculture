@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Cloud, Sprout, AlertTriangle, Droplets, TrendingUp, MessageCircle, TrendingDown, Map, Scan, BarChart3, Users, Home, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { Cloud, Sprout, AlertTriangle, Droplets, TrendingUp, MessageCircle, TrendingDown, Map, Scan, BarChart3, Users, Home, Settings, HelpCircle, LogOut, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 function Sidebar({ user, onLogout }) {
@@ -10,6 +10,7 @@ function Sidebar({ user, onLogout }) {
     { path: '/dashboard', icon: Home, label: t('dashboard'), color: 'text-primary' },
     { path: '/weather', icon: Cloud, label: t('weather'), color: 'text-blue-600' },
     { path: '/crop-advice', icon: Sprout, label: t('cropAdvice'), color: 'text-green-600' },
+    { path: '/disease-detection', icon: Shield, label: 'Disease Detection', color: 'text-red-600' },
     { path: '/risk-predictor', icon: TrendingDown, label: t('riskPredictor'), color: 'text-orange-600' },
     { path: '/soil-scanner', icon: Scan, label: t('soilScannerLabel'), color: 'text-amber-600' },
     { path: '/climate-map', icon: Map, label: t('climateMapLabel'), color: 'text-teal-600' },
