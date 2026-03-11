@@ -6,7 +6,12 @@ import os
 import json
 
 app = Flask(__name__)
-CORS(app)
+# Allow both production and local frontend URLs
+CORS(app, origins=[
+    'https://smartagriculture-frontend-jwzd.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:5173'
+])
 
 # Configuration
 OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY', 'your_api_key_here')
