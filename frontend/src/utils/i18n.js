@@ -192,11 +192,11 @@ const resources = {
       },
       // New Features - Navigation Labels
       riskPredictor: "Risk Predictor",
-      soilScanner: "Soil Scanner",
-      marketPredictor: "Market Predictor",
+      soilScannerLabel: "Soil Scanner",
+      marketPredictorLabel: "Market Predictor",
       community: "Community",
       aiChatbot: "AI Assistant",
-      climateMap: "Climate Map",
+      climateMapLabel: "Climate Map",
       // AI Chatbot
       chatbot: {
         title: "AI Farming Assistant",
@@ -543,11 +543,11 @@ const resources = {
       },
       // New Features - Navigation Labels
       riskPredictor: "அபாய முன்னறிவிப்பு",
-      soilScanner: "மண் ஸ்கேனர்",
-      marketPredictor: "சந்தை முன்னறிவிப்பு",
+      soilScannerLabel: "மண் ஸ்கேனர்",
+      marketPredictorLabel: "சந்தை முன்னறிவிப்பு",
       community: "சமூகம்",
       aiChatbot: "AI உதவியாளர்",
-      climateMap: "காலநிலை வரைபடம்",
+      climateMapLabel: "காலநிலை வரைபடம்",
       // AI Chatbot
       chatbot: {
         title: "AI விவசாய உதவியாளர்",
