@@ -79,8 +79,8 @@ function Alerts() {
   return (
     <div className="space-y-6">
       <div className="gradient-bg text-white rounded-xl p-6">
-        <h2 className="text-3xl font-bold mb-2">Climate Risk Alerts</h2>
-        <p className="text-green-100">Stay informed about weather risks and protect your crops</p>
+        <h2 className="text-3xl font-bold mb-2">{t('climateRiskAlerts')}</h2>
+        <p className="text-green-100">{t('stayInformed')}</p>
       </div>
 
       {alerts.length === 0 ? (
@@ -88,8 +88,8 @@ function Alerts() {
           <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
             <AlertTriangle className="w-10 h-10 text-primary" />
           </div>
-          <h3 className="text-xl font-bold text-gray-800 mb-2">No Active Alerts</h3>
-          <p className="text-gray-600">Weather conditions are favorable. No immediate risks detected.</p>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">{t('noActiveAlerts')}</h3>
+          <p className="text-gray-600">{t('weatherConditions')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -111,7 +111,9 @@ function Alerts() {
                         alert.severity === 'medium' ? 'bg-yellow-200 text-yellow-800' :
                         'bg-blue-200 text-blue-800'
                       }`}>
-                        {alert.severity.toUpperCase()} PRIORITY
+                        {alert.severity === 'high' ? t('highPriority').toUpperCase() : 
+                         alert.severity === 'medium' ? t('mediumPriority').toUpperCase() : 
+                         'LOW PRIORITY'}
                       </span>
                     </div>
                   </div>
@@ -121,7 +123,7 @@ function Alerts() {
                   </p>
                   
                   <div className={`bg-white bg-opacity-50 rounded-lg p-4 ${getSeverityTextColor(alert.severity)}`}>
-                    <p className="font-semibold mb-1">Recommended Action:</p>
+                    <p className="font-semibold mb-1">{t('recommendedAction')}:</p>
                     <p className="text-sm">{alert.action}</p>
                   </div>
                 </div>
@@ -136,7 +138,7 @@ function Alerts() {
         <div className="card bg-red-50 border-2 border-red-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-red-600 font-semibold">High Priority</p>
+              <p className="text-sm text-red-600 font-semibold">{t('highPriority')}</p>
               <p className="text-3xl font-bold text-red-700">
                 {alerts.filter(a => a.severity === 'high').length}
               </p>
@@ -148,7 +150,7 @@ function Alerts() {
         <div className="card bg-yellow-50 border-2 border-yellow-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yellow-600 font-semibold">Medium Priority</p>
+              <p className="text-sm text-yellow-600 font-semibold">{t('mediumPriority')}</p>
               <p className="text-3xl font-bold text-yellow-700">
                 {alerts.filter(a => a.severity === 'medium').length}
               </p>
@@ -160,7 +162,7 @@ function Alerts() {
         <div className="card bg-green-50 border-2 border-green-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-green-600 font-semibold">Total Alerts</p>
+              <p className="text-sm text-green-600 font-semibold">{t('totalAlerts')}</p>
               <p className="text-3xl font-bold text-green-700">{alerts.length}</p>
             </div>
             <AlertTriangle className="w-12 h-12 text-green-500" />
