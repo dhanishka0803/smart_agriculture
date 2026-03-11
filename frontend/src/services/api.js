@@ -1,13 +1,30 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+// Use environment variable for API URL, fallback to /api for local development
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000, // 10 second timeout
 });
+
+// Add response interceptor for better error handling
+api.interceptors.response.use(
+  response => response,
+  error => {
+    console.error('API Error:', error.message);
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Request timeout - please check your connection');
+    }
+    if (!error.response) {
+      throw new Error('Backend server is not available. Please ensure the backend is running.');
+    }
+    throw error;
+  }
+);
 
 export const weatherService = {
   getWeather: async (lat, lon) => {
