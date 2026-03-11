@@ -1,16 +1,30 @@
 import { useState } from 'react';
-import { Upload, Camera, AlertTriangle, CheckCircle, Leaf, Shield } from 'lucide-react';
+import { Upload, Camera, AlertTriangle, CheckCircle, Leaf, Shield, Loader, X } from 'lucide-react';
 
 function DiseaseDetection() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        setError('File size too large. Please upload an image under 10MB.');
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Invalid file type. Please upload an image file.');
+        return;
+      }
+
       setSelectedImage(file);
+      setError(null);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
@@ -24,33 +38,63 @@ function DiseaseDetection() {
     if (!selectedImage) return;
 
     setLoading(true);
+    setError(null);
     const formData = new FormData();
-    formData.append('image', selectedImage);
+    formData.append('file', selectedImage);
 
     try {
-      const response = await fetch('https://smart-agriculture-4pz4.onrender.com/api/disease-detection', {
+      // Use FastAPI ML endpoint
+      const response = await fetch('http://localhost:8000/predict-disease', {
         method: 'POST',
         body: formData
       });
+
       const data = await response.json();
-      setResult(data);
+      
+      if (data.success) {
+        setResult(data);
+      } else {
+        // Handle specific error types
+        if (data.error === 'not_a_plant') {
+          setError(data.message);
+        } else if (data.error === 'low_confidence') {
+          setError(data.message);
+        } else {
+          setError('Failed to analyze image. Please try again.');
+        }
+        setResult(null);
+      }
     } catch (error) {
       console.error('Error:', error);
-      setResult({
-        success: false,
-        error: 'Failed to analyze image'
-      });
+      setError('Unable to connect to disease detection service. Please ensure the ML API is running.');
+      setResult(null);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleReset = () => {
+    setSelectedImage(null);
+    setPreview(null);
+    setResult(null);
+    setError(null);
+  };
+
   const getSeverityColor = (severity) => {
     switch (severity?.toLowerCase()) {
-      case 'critical': return 'text-red-600 bg-red-50';
-      case 'high': return 'text-orange-600 bg-orange-50';
-      case 'medium': return 'text-yellow-600 bg-yellow-50';
-      default: return 'text-green-600 bg-green-50';
+      case 'high': return 'text-red-600 bg-red-50 border-red-200';
+      case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'low': return 'text-green-600 bg-green-50 border-green-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
+  };
+
+  const getSeverityIcon = (severity) => {
+    switch (severity?.toLowerCase()) {
+      case 'high': return '🔴';
+      case 'medium': return '🟡';
+      case 'low': return '🟢';
+      default: return '⚪';
     }
   };
 
@@ -70,7 +114,7 @@ function DiseaseDetection() {
           </h3>
 
           <div className="space-y-4">
-            <div className="border-4 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-primary transition-colors">
+            <div className="border-4 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-primary transition-colors relative">
               <input
                 type="file"
                 accept="image/*"
@@ -80,7 +124,18 @@ function DiseaseDetection() {
               />
               <label htmlFor="image-upload" className="cursor-pointer">
                 {preview ? (
-                  <img src={preview} alt="Preview" className="max-h-64 mx-auto rounded-lg shadow-lg" />
+                  <div className="relative">
+                    <img src={preview} alt="Preview" className="max-h-64 mx-auto rounded-lg shadow-lg" />
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleReset();
+                      }}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 ) : (
                   <div>
                     <Upload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -91,6 +146,15 @@ function DiseaseDetection() {
               </label>
             </div>
 
+            {error && (
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                <div className="flex items-start">
+                  <AlertTriangle className="w-5 h-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+              </div>
+            )}
+
             <button
               onClick={handleAnalyze}
               disabled={!selectedImage || loading}
@@ -98,8 +162,8 @@ function DiseaseDetection() {
             >
               {loading ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent inline-block mr-2"></div>
-                  Analyzing...
+                  <Loader className="w-5 h-5 inline mr-2 animate-spin" />
+                  Analyzing crop disease...
                 </>
               ) : (
                 <>
@@ -115,7 +179,8 @@ function DiseaseDetection() {
                 <li>• Take clear, well-lit photos</li>
                 <li>• Focus on affected leaves or parts</li>
                 <li>• Avoid blurry or dark images</li>
-                <li>• Include multiple angles if possible</li>
+                <li>• Ensure the leaf fills most of the frame</li>
+                <li>• Upload only plant/crop images</li>
               </ul>
             </div>
           </div>
@@ -133,66 +198,92 @@ function DiseaseDetection() {
               <Leaf className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500">Upload an image to see disease analysis</p>
             </div>
-          ) : result.success ? (
+          ) : (
             <div className="space-y-4">
-              <div className="bg-gradient-to-r from-primary to-primary-light text-white p-4 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-xl font-bold">{result.disease}</h4>
-                  <span className={`px-3 py-1 rounded-full text-sm font-bold ${getSeverityColor(result.severity)}`}>
-                    {result.severity}
+              {/* Disease Name and Confidence */}
+              <div className="bg-gradient-to-r from-primary to-primary-light text-white p-6 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-2xl font-bold">{result.disease}</h4>
+                  <span className={`px-4 py-2 rounded-full text-sm font-bold border-2 ${getSeverityColor(result.severity)}`}>
+                    {getSeverityIcon(result.severity)} {result.severity} Risk
                   </span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="flex-1 bg-white bg-opacity-30 rounded-full h-2">
+                
+                {result.crop && (
+                  <p className="text-green-100 mb-3">Crop: {result.crop}</p>
+                )}
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Confidence Level</span>
+                    <span className="font-bold">{(result.confidence * 100).toFixed(1)}%</span>
+                  </div>
+                  <div className="w-full bg-white bg-opacity-30 rounded-full h-3">
                     <div
-                      className="bg-white h-2 rounded-full"
+                      className="bg-white h-3 rounded-full transition-all duration-500"
                       style={{ width: `${result.confidence * 100}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm font-semibold">{(result.confidence * 100).toFixed(0)}%</span>
                 </div>
               </div>
 
+              {/* Symptoms */}
               <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                <h5 className="font-bold text-red-800 mb-2 flex items-center">
+                <h5 className="font-bold text-red-800 mb-3 flex items-center">
                   <AlertTriangle className="w-5 h-5 mr-2" />
                   Symptoms
                 </h5>
-                <ul className="text-sm text-red-700 space-y-1">
+                <ul className="text-sm text-red-700 space-y-2">
                   {result.symptoms.map((symptom, idx) => (
-                    <li key={idx}>• {symptom}</li>
+                    <li key={idx} className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>{symptom}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
 
+              {/* Treatment */}
               <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                <h5 className="font-bold text-green-800 mb-2 flex items-center">
+                <h5 className="font-bold text-green-800 mb-3 flex items-center">
                   <CheckCircle className="w-5 h-5 mr-2" />
                   Treatment
                 </h5>
-                <ul className="text-sm text-green-700 space-y-1">
+                <ul className="text-sm text-green-700 space-y-2">
                   {result.treatment.map((step, idx) => (
-                    <li key={idx}>• {step}</li>
+                    <li key={idx} className="flex items-start">
+                      <span className="mr-2">{idx + 1}.</span>
+                      <span>{step}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
 
+              {/* Prevention */}
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <h5 className="font-bold text-blue-800 mb-2 flex items-center">
+                <h5 className="font-bold text-blue-800 mb-3 flex items-center">
                   <Shield className="w-5 h-5 mr-2" />
                   Prevention
                 </h5>
-                <ul className="text-sm text-blue-700 space-y-1">
+                <ul className="text-sm text-blue-700 space-y-2">
                   {result.prevention.map((tip, idx) => (
-                    <li key={idx}>• {tip}</li>
+                    <li key={idx} className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>{tip}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <p className="text-red-600">{result.error || 'Failed to analyze image'}</p>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button onClick={handleReset} className="btn-secondary flex-1">
+                  Analyze Another Image
+                </button>
+                <button className="btn-primary flex-1">
+                  Save Report
+                </button>
+              </div>
             </div>
           )}
         </div>

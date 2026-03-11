@@ -1,0 +1,297 @@
+{
+  "Potato___Early_blight": {
+    "disease_name": "Potato Early Blight",
+    "crop": "Potato",
+    "severity_threshold": {
+      "high": 0.8,
+      "medium": 0.5,
+      "low": 0.3
+    },
+    "symptoms": [
+      "Dark brown spots with concentric rings on older leaves",
+      "Yellowing of leaves around the spots",
+      "Premature leaf drop",
+      "Lesions on stems and tubers",
+      "Reduced plant vigor"
+    ],
+    "treatment": [
+      "Apply fungicides containing chlorothalonil or mancozeb",
+      "Remove and destroy infected plant parts immediately",
+      "Improve air circulation by proper spacing",
+      "Apply copper-based fungicides as preventive measure",
+      "Use drip irrigation instead of overhead watering"
+    ],
+    "prevention": [
+      "Use certified disease-free seed potatoes",
+      "Practice crop rotation (3-4 year cycle)",
+      "Maintain proper plant spacing for air circulation",
+      "Remove plant debris after harvest",
+      "Apply mulch to prevent soil splash",
+      "Monitor fields regularly for early detection"
+    ]
+  },
+  "Potato___Late_blight": {
+    "disease_name": "Potato Late Blight",
+    "crop": "Potato",
+    "severity_threshold": {
+      "high": 0.7,
+      "medium": 0.4,
+      "low": 0.2
+    },
+    "symptoms": [
+      "Water-soaked spots on leaves that turn brown",
+      "White fuzzy growth on undersides of leaves",
+      "Rapid spreading during humid weather",
+      "Brown lesions on stems",
+      "Tuber rot with brown discoloration"
+    ],
+    "treatment": [
+      "Apply systemic fungicides (metalaxyl, dimethomorph)",
+      "Remove infected plants immediately to prevent spread",
+      "Destroy infected tubers",
+      "Apply copper-based fungicides in early stages",
+      "Harvest early if disease is severe"
+    ],
+    "prevention": [
+      "Plant resistant varieties",
+      "Use certified disease-free seed",
+      "Avoid overhead irrigation",
+      "Hill up soil to protect tubers",
+      "Monitor weather for blight-favorable conditions",
+      "Apply preventive fungicides before disease appears"
+    ]
+  },
+  "Potato___healthy": {
+    "disease_name": "Healthy Potato Plant",
+    "crop": "Potato",
+    "severity_threshold": {
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "symptoms": [
+      "No disease symptoms detected",
+      "Leaves are green and healthy",
+      "Normal plant growth"
+    ],
+    "treatment": [
+      "No treatment needed",
+      "Continue regular monitoring",
+      "Maintain good agricultural practices"
+    ],
+    "prevention": [
+      "Continue current management practices",
+      "Regular field monitoring",
+      "Proper nutrition and irrigation",
+      "Crop rotation",
+      "Use disease-free seeds"
+    ]
+  },
+  "Tomato___Early_blight": {
+    "disease_name": "Tomato Early Blight",
+    "crop": "Tomato",
+    "severity_threshold": {
+      "high": 0.8,
+      "medium": 0.5,
+      "low": 0.3
+    },
+    "symptoms": [
+      "Dark brown spots with concentric rings (target-like)",
+      "Yellowing of lower leaves first",
+      "Stem lesions near soil line",
+      "Fruit spots near the stem end",
+      "Premature defoliation"
+    ],
+    "treatment": [
+      "Apply fungicides (chlorothalonil, mancozeb)",
+      "Remove infected lower leaves",
+      "Improve air circulation",
+      "Apply copper-based sprays",
+      "Stake plants to keep foliage off ground"
+    ],
+    "prevention": [
+      "Use disease-resistant varieties",
+      "Rotate crops (3-year minimum)",
+      "Mulch around plants",
+      "Water at base of plants",
+      "Space plants properly",
+      "Remove plant debris"
+    ]
+  },
+  "Tomato___Late_blight": {
+    "disease_name": "Tomato Late Blight",
+    "crop": "Tomato",
+    "severity_threshold": {
+      "high": 0.7,
+      "medium": 0.4,
+      "low": 0.2
+    },
+    "symptoms": [
+      "Large brown blotches on leaves",
+      "White mold on leaf undersides",
+      "Brown lesions on stems",
+      "Firm brown spots on green fruit",
+      "Rapid plant collapse in humid conditions"
+    ],
+    "treatment": [
+      "Apply systemic fungicides immediately",
+      "Remove and destroy infected plants",
+      "Improve air circulation",
+      "Reduce humidity around plants",
+      "Harvest unaffected fruit early"
+    ],
+    "prevention": [
+      "Plant resistant varieties",
+      "Avoid overhead watering",
+      "Provide good air circulation",
+      "Monitor weather conditions",
+      "Apply preventive fungicides",
+      "Remove volunteer tomato plants"
+    ]
+  },
+  "Tomato___Bacterial_spot": {
+    "disease_name": "Tomato Bacterial Spot",
+    "crop": "Tomato",
+    "severity_threshold": {
+      "high": 0.75,
+      "medium": 0.45,
+      "low": 0.25
+    },
+    "symptoms": [
+      "Small dark brown spots on leaves",
+      "Yellow halos around spots",
+      "Raised spots on fruit",
+      "Leaf drop in severe cases",
+      "Reduced fruit quality"
+    ],
+    "treatment": [
+      "Apply copper-based bactericides",
+      "Remove infected plant parts",
+      "Avoid working with wet plants",
+      "Use drip irrigation",
+      "Apply streptomycin if available"
+    ],
+    "prevention": [
+      "Use disease-free transplants",
+      "Rotate crops for 3 years",
+      "Avoid overhead irrigation",
+      "Disinfect tools regularly",
+      "Plant resistant varieties",
+      "Remove plant debris"
+    ]
+  },
+  "Tomato___healthy": {
+    "disease_name": "Healthy Tomato Plant",
+    "crop": "Tomato",
+    "severity_threshold": {
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "symptoms": [
+      "No disease symptoms detected",
+      "Healthy green foliage",
+      "Normal fruit development"
+    ],
+    "treatment": [
+      "No treatment needed",
+      "Continue monitoring",
+      "Maintain good practices"
+    ],
+    "prevention": [
+      "Continue current practices",
+      "Regular inspection",
+      "Proper watering and fertilization",
+      "Good air circulation",
+      "Crop rotation"
+    ]
+  },
+  "Corn_(maize)___Common_rust_": {
+    "disease_name": "Corn Common Rust",
+    "crop": "Corn (Maize)",
+    "severity_threshold": {
+      "high": 0.75,
+      "medium": 0.45,
+      "low": 0.25
+    },
+    "symptoms": [
+      "Small circular to elongate brown pustules",
+      "Pustules on both leaf surfaces",
+      "Reddish-brown spores",
+      "Yellowing of leaves",
+      "Reduced photosynthesis"
+    ],
+    "treatment": [
+      "Apply fungicides (azoxystrobin, propiconazole)",
+      "Remove heavily infected leaves",
+      "Ensure good air circulation",
+      "Monitor disease progression",
+      "Apply at early infection stage"
+    ],
+    "prevention": [
+      "Plant resistant hybrids",
+      "Avoid late planting",
+      "Proper plant spacing",
+      "Remove crop residue",
+      "Rotate with non-host crops",
+      "Monitor weather conditions"
+    ]
+  },
+  "Corn_(maize)___Northern_Leaf_Blight": {
+    "disease_name": "Corn Northern Leaf Blight",
+    "crop": "Corn (Maize)",
+    "severity_threshold": {
+      "high": 0.8,
+      "medium": 0.5,
+      "low": 0.3
+    },
+    "symptoms": [
+      "Long elliptical gray-green lesions",
+      "Lesions parallel to leaf veins",
+      "Lesions turn tan or brown",
+      "Severe defoliation possible",
+      "Reduced grain fill"
+    ],
+    "treatment": [
+      "Apply fungicides at early infection",
+      "Use strobilurin or triazole fungicides",
+      "Remove infected plant debris",
+      "Improve field drainage",
+      "Monitor disease spread"
+    ],
+    "prevention": [
+      "Plant resistant hybrids",
+      "Crop rotation (2-3 years)",
+      "Bury crop residue",
+      "Avoid continuous corn planting",
+      "Balanced fertilization",
+      "Proper plant density"
+    ]
+  },
+  "Corn_(maize)___healthy": {
+    "disease_name": "Healthy Corn Plant",
+    "crop": "Corn (Maize)",
+    "severity_threshold": {
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "symptoms": [
+      "No disease symptoms",
+      "Healthy green leaves",
+      "Normal growth and development"
+    ],
+    "treatment": [
+      "No treatment needed",
+      "Continue monitoring",
+      "Maintain good practices"
+    ],
+    "prevention": [
+      "Continue current practices",
+      "Regular field inspection",
+      "Proper fertilization",
+      "Adequate irrigation",
+      "Crop rotation"
+    ]
+  }
+}
