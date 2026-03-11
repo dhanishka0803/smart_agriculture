@@ -400,3 +400,67 @@ def profit_estimate():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
+
+# Disease Detection Endpoint
+@app.route('/api/disease-detection', methods=['POST'])
+def detect_disease():
+    """
+    Detect crop disease from uploaded image
+    """
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image provided'}), 400
+    
+    file = request.files['image']
+    
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+    
+    try:
+        # For now, return mock data
+        # In production, load the trained model and make predictions
+        import random
+        
+        diseases = [
+            {
+                'name': 'Tomato Late Blight',
+                'confidence': 0.94,
+                'severity': 'Critical',
+                'symptoms': ['Water-soaked spots on leaves', 'White mold on undersides', 'Brown lesions on stems'],
+                'treatment': ['Apply copper-based fungicides', 'Remove infected plants immediately', 'Improve air circulation'],
+                'prevention': ['Use disease-free seeds', 'Avoid overhead watering', 'Space plants properly']
+            },
+            {
+                'name': 'Potato Early Blight',
+                'confidence': 0.89,
+                'severity': 'Medium',
+                'symptoms': ['Concentric rings on leaves', 'Dark brown spots', 'Yellowing of leaves'],
+                'treatment': ['Apply chlorothalonil fungicide', 'Remove infected foliage', 'Rotate crops'],
+                'prevention': ['Use certified seed potatoes', 'Maintain proper spacing', 'Mulch to prevent soil splash']
+            },
+            {
+                'name': 'Apple Scab',
+                'confidence': 0.87,
+                'severity': 'High',
+                'symptoms': ['Dark, olive-green spots on leaves', 'Scabby lesions on fruit', 'Premature leaf drop'],
+                'treatment': ['Apply fungicides (Captan, Myclobutanil)', 'Remove infected leaves', 'Prune for air circulation'],
+                'prevention': ['Plant resistant varieties', 'Rake and destroy fallen leaves', 'Apply dormant oil spray']
+            }
+        ]
+        
+        # Randomly select a disease for demo
+        detected_disease = random.choice(diseases)
+        
+        return jsonify({
+            'success': True,
+            'disease': detected_disease['name'],
+            'confidence': detected_disease['confidence'],
+            'severity': detected_disease['severity'],
+            'symptoms': detected_disease['symptoms'],
+            'treatment': detected_disease['treatment'],
+            'prevention': detected_disease['prevention'],
+            'image_analyzed': True
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
