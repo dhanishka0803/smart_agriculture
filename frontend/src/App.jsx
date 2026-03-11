@@ -21,6 +21,7 @@ import SoilHealthScanner from './pages/SoilHealthScanner';
 import MarketPredictor from './pages/MarketPredictor';
 import CommunityForum from './pages/CommunityForum';
 import DiseaseDetection from './pages/DiseaseDetection';
+import Notifications from './pages/Notifications';
 import './utils/i18n';
 
 function ProtectedRoute({ children }) {
@@ -86,6 +87,7 @@ function AppContent() {
             <Route path="/soil-scanner" element={<ProtectedRoute><SoilHealthScanner /></ProtectedRoute>} />
             <Route path="/market-predictor" element={<ProtectedRoute><MarketPredictor /></ProtectedRoute>} />
             <Route path="/community" element={<ProtectedRoute><CommunityForum /></ProtectedRoute>} />
+            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
           </Routes>
         </div>
         {showLayout && <Footer />}

@@ -1,6 +1,7 @@
 import { Globe, Bell, Search, Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Header({ user, onLanguageChange, currentLang }) {
   const { t } = useTranslation();
@@ -75,9 +76,13 @@ function Header({ user, onLanguageChange, currentLang }) {
                   ))}
                 </div>
                 <div className="p-3 text-center border-t border-gray-200">
-                  <button className="text-sm text-primary font-semibold hover:underline">
+                  <Link 
+                    to="/notifications" 
+                    onClick={() => setShowNotifications(false)}
+                    className="text-sm text-primary font-semibold hover:underline"
+                  >
                     View All Notifications
-                  </button>
+                  </Link>
                 </div>
               </div>
             )}
