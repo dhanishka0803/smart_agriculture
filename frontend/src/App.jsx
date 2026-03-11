@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, us
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cloud, Sprout, AlertTriangle, Droplets, TrendingUp, Globe, User, LogOut, MessageCircle, TrendingDown, Map, Scan, BarChart3, Users } from 'lucide-react';
+import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Weather from './pages/Weather';
 import CropRecommendation from './pages/CropRecommendation';
@@ -51,6 +52,7 @@ function AppContent() {
   };
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isLandingPage = location.pathname === '/';
 
   const navItems = [
     { path: '/dashboard', icon: Cloud, label: t('dashboard') },
@@ -69,7 +71,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {!isAuthPage && (
+      {!isAuthPage && !isLandingPage && (
         <>
           {/* Header */}
           <header className="gradient-bg text-white shadow-lg sticky top-0 z-50">
@@ -155,11 +157,11 @@ function AppContent() {
       )}
 
       {/* Main Content */}
-      <main className={!isAuthPage ? "container mx-auto px-4 py-8" : ""}>
+      <main className={!isAuthPage && !isLandingPage ? "container mx-auto px-4 py-8" : ""}>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/weather" element={<ProtectedRoute><Weather /></ProtectedRoute>} />
           <Route path="/crop-advice" element={<ProtectedRoute><CropRecommendation /></ProtectedRoute>} />

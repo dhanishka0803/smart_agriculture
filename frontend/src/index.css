@@ -3,37 +3,138 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary-dark: #3E5F44;
+    --primary-medium: #5E936C;
+    --primary-light: #93DA97;
+    --primary-pale: #E8FFD7;
+    --accent-mint: #A8DF8E;
+    --accent-cream: #F0FFDF;
+    --accent-pink-light: #FFD8DF;
+    --accent-pink: #FFAAB8;
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply text-gray-900;
+    background: linear-gradient(135deg, #F0FFDF 0%, #E8FFD7 100%);
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5;
+    background: linear-gradient(135deg, #3E5F44 0%, #5E936C 100%);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #2d4532 0%, #4a7355 100%);
   }
   
   .btn-secondary {
-    @apply bg-secondary hover:bg-secondary-dark text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5;
+    background: linear-gradient(135deg, #93DA97 0%, #A8DF8E 100%);
+    color: #3E5F44;
+  }
+  
+  .btn-secondary:hover {
+    background: linear-gradient(135deg, #7bc580 0%, #8fc575 100%);
+  }
+
+  .btn-accent {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5;
+    background: linear-gradient(135deg, #FFAAB8 0%, #FFD8DF 100%);
+    color: #3E5F44;
   }
   
   .card {
-    @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6;
+    @apply bg-white rounded-2xl shadow-lg p-6 transition-all hover:shadow-xl border border-gray-100;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(62, 95, 68, 0.1);
+    @apply rounded-2xl p-6;
   }
   
   .input-field {
-    @apply w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none transition-colors;
+    @apply w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all;
+    border-color: #93DA97;
+    background-color: white;
   }
   
-  .alert-card {
-    @apply border-l-4 p-4 rounded-lg shadow-md;
+  .input-field:focus {
+    border-color: #3E5F44;
+    box-shadow: 0 0 0 3px rgba(62, 95, 68, 0.1);
   }
   
   .gradient-bg {
-    @apply bg-gradient-to-br from-primary to-primary-dark;
+    background: linear-gradient(135deg, #3E5F44 0%, #5E936C 50%, #93DA97 100%);
   }
   
   .gradient-blue {
-    @apply bg-gradient-to-br from-secondary to-secondary-dark;
+    background: linear-gradient(135deg, #5E936C 0%, #93DA97 100%);
   }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, #A8DF8E 0%, #E8FFD7 100%);
+  }
+
+  .gradient-pink {
+    background: linear-gradient(135deg, #FFAAB8 0%, #FFD8DF 100%);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E8FFD7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #93DA97;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5E936C;
 }
