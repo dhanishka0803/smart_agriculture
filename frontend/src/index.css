@@ -14,11 +14,26 @@
     --accent-pink: #FFAAB8;
   }
 
+  /* Dark mode */
+  .dark {
+    --primary-dark: #2d4532;
+    --primary-medium: #4a7355;
+    --primary-light: #7bc580;
+    --primary-pale: #1a2e1f;
+    --accent-mint: #8fc575;
+    --accent-cream: #1a2e1f;
+  }
+
   body {
     @apply text-gray-900;
     background: linear-gradient(135deg, #F0FFDF 0%, #E8FFD7 100%);
     min-height: 100vh;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .dark body {
+    background: linear-gradient(135deg, #1a2e1f 0%, #0f1a12 100%);
+    color: #e5e7eb;
   }
 }
 
@@ -32,6 +47,10 @@
   .btn-primary:hover {
     background: linear-gradient(135deg, #2d4532 0%, #4a7355 100%);
   }
+
+  .dark .btn-primary {
+    background: linear-gradient(135deg, #4a7355 0%, #5E936C 100%);
+  }
   
   .btn-secondary {
     @apply px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5;
@@ -43,6 +62,15 @@
     background: linear-gradient(135deg, #7bc580 0%, #8fc575 100%);
   }
 
+  .dark .btn-secondary {
+    background: linear-gradient(135deg, #3E5F44 0%, #5E936C 100%);
+    color: white;
+  }
+ 
+  .dark .btn-secondary:hover {
+    background: linear-gradient(135deg, #2d4532 0%, #3E5F44 100%);
+  }
+
   .btn-accent {
     @apply px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5;
     background: linear-gradient(135deg, #FFAAB8 0%, #FFD8DF 100%);
@@ -51,6 +79,11 @@
   
   .card {
     @apply bg-white rounded-2xl shadow-lg p-6 transition-all hover:shadow-xl border border-gray-100;
+  }
+
+  .dark .card {
+    @apply bg-gray-800 border-gray-700;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
   }
 
   .glass-card {
@@ -66,18 +99,34 @@
     border-color: #93DA97;
     background-color: white;
   }
+
+  .dark .input-field {
+    @apply bg-gray-700 border-gray-600 text-white;
+  }
   
   .input-field:focus {
     border-color: #3E5F44;
     box-shadow: 0 0 0 3px rgba(62, 95, 68, 0.1);
   }
+
+  .dark .input-field:focus {
+    border-color: #93DA97;
+  }
   
   .gradient-bg {
     background: linear-gradient(135deg, #3E5F44 0%, #5E936C 50%, #93DA97 100%);
   }
-  
+
+  .gradient-bg-dark {
+    background: linear-gradient(135deg, #2d4532 0%, #3E5F44 50%, #5E936C 100%);
+  }
+   
   .gradient-blue {
     background: linear-gradient(135deg, #5E936C 0%, #93DA97 100%);
+  }
+
+  .dark .gradient-blue {
+    background: linear-gradient(135deg, #3E5F44 0%, #5E936C 100%);
   }
 
   .gradient-accent {
@@ -96,6 +145,90 @@
 
   .animate-slide-in-right {
     animation: slideInRight 0.6s ease-out;
+  }
+
+  .text-primary {
+    color: #3E5F44;
+  }
+
+  .dark .text-primary {
+    color: #93DA97;
+  }
+
+  .text-primary-light {
+    color: #93DA97;
+  }
+
+  .dark .text-primary-light {
+    color: #5E936C;
+  }
+
+  .text-primary-pale {
+    color: #A8DF8E;
+  }
+
+  .bg-primary {
+    background-color: #3E5F44;
+  }
+
+  .dark .bg-primary {
+    background-color: #5E936C;
+  }
+
+  .bg-primary-light {
+    background-color: #93DA97;
+  }
+
+  .dark .bg-primary-light {
+    background-color: #3E5F44;
+  }
+
+  .bg-primary-pale {
+    background-color: #E8FFD7;
+  }
+
+  .dark .bg-primary-pale {
+    background-color: #1a2e1f;
+  }
+
+  .bg-accent-cream {
+    background-color: #F0FFDF;
+  }
+
+  .dark .bg-accent-cream {
+    background-color: #1a2e1f;
+  }
+
+  .border-primary {
+    border-color: #3E5F44;
+  }
+
+  .dark .border-primary {
+    border-color: #5E936C;
+  }
+
+  .ring-primary {
+    --tw-ring-color: #3E5F44;
+  }
+
+  .dark .ring-primary {
+    --tw-ring-color: #5E936C;
+  }
+
+  .from-primary {
+    --tw-gradient-from: #3E5F44;
+  }
+
+  .to-primary-light {
+    --tw-gradient-to: #93DA97;
+  }
+
+  .dark .from-primary {
+    --tw-gradient-from: #5E936C;
+  }
+
+  .dark .to-primary-light {
+    --tw-gradient-to: #3E5F44;
   }
 }
 
@@ -130,6 +263,10 @@
   background: #E8FFD7;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #1a2e1f;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #93DA97;
   border-radius: 5px;
@@ -137,4 +274,27 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #5E936C;
+}
+
+/* Animation delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+  background-color: #93DA97;
+  color: #3E5F44;
+}
+
+.dark ::selection {
+  background-color: #5E936C;
+  color: white;
 }

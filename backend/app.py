@@ -11,9 +11,10 @@ import sys
 app = Flask(__name__)
 # Allow both production and local frontend URLs
 CORS(app, origins=[
-    'https://smartagriculture-frontend-jwzd.onrender.com',
     'http://localhost:3000',
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://smartagriculture-frontend-jwzd.onrender.com'
 ])
 
 # Configuration
@@ -526,6 +527,143 @@ def chat():
 
 
 # Disease Detection Endpoint
+@app.route('/api/predict-disease', methods=['POST'])
+def predict_disease():
+    """
+    Detect crop disease from uploaded image (FastAPI style endpoint)
+    """
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'error': 'No image provided'}), 400
+    
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({'success': False, 'error': 'No file selected'}), 400
+    
+    try:
+        # For now, return mock data with improved responses
+        # In production, load the trained model and make predictions
+        import random
+        
+        # Multiple crop diseases database
+        diseases_db = {
+            'tomato': [
+                {
+                    'name': 'Tomato Late Blight',
+                    'confidence': 0.94,
+                    'severity': 'High',
+                    'symptoms': ['Water-soaked spots on leaves', 'White mold on leaf undersides', 'Brown lesions on stems', 'Fruit rot'],
+                    'treatment': ['Apply copper-based fungicide immediately', 'Remove and destroy infected plants', 'Improve air circulation', 'Avoid overhead watering'],
+                    'prevention': ['Use disease-free seeds', 'Plant resistant varieties', 'Proper plant spacing', 'Remove plant debris']
+                },
+                {
+                    'name': 'Tomato Early Blight',
+                    'confidence': 0.89,
+                    'severity': 'Medium',
+                    'symptoms': ['Concentric rings on leaves', 'Dark brown spots', 'Yellowing of lower leaves', 'Leaf drop'],
+                    'treatment': ['Apply chlorothalonil fungicide', 'Remove infected foliage', 'Mulch around plants', 'Rotate crops'],
+                    'prevention': ['Use certified seeds', 'Maintain proper spacing', 'Mulch to prevent soil splash', 'Remove fallen leaves']
+                }
+            ],
+            'potato': [
+                {
+                    'name': 'Potato Late Blight',
+                    'confidence': 0.92,
+                    'severity': 'High',
+                    'symptoms': ['Water-soaked lesions', 'White mold', 'Rapidly turning brown', 'Tuber rot'],
+                    'treatment': ['Apply fungicide (Mancozeb)', 'Destroy infected plants', 'Improve drainage', 'Harvest early if severe'],
+                    'prevention': ['Use certified seed potatoes', 'Plant resistant varieties', 'Proper spacing', 'Monitor weather']
+                }
+            ],
+            'rice': [
+                {
+                    'name': 'Rice Blast',
+                    'confidence': 0.91,
+                    'severity': 'High',
+                    'symptoms': ['Diamond-shaped lesions', 'White to gray center', 'Brown borders', 'Neck rot'],
+                    'treatment': ['Apply tricyclazole fungicide', 'Reduce nitrogen fertilizer', 'Maintain proper water levels', 'Remove crop residues'],
+                    'prevention': ['Use resistant varieties', 'Balanced fertilization', 'Proper planting density', 'Crop rotation']
+                }
+            ],
+            'wheat': [
+                {
+                    'name': 'Wheat Rust',
+                    'confidence': 0.88,
+                    'severity': 'High',
+                    'symptoms': ['Orange-red pustules', 'Yellowing leaves', 'Stunted growth', 'Reduced grain fill'],
+                    'treatment': ['Apply propiconazole fungicide', 'Remove infected leaves', 'Apply early for best results', 'Increase airflow'],
+                    'prevention': ['Plant resistant varieties', 'Early planting', 'Scout regularly', 'Remove volunteer wheat']
+                }
+            ],
+            'cotton': [
+                {
+                    'name': 'Cotton Wilt',
+                    'confidence': 0.85,
+                    'severity': 'Medium',
+                    'symptoms': ['Yellowing leaves', 'Wilting despite moisture', 'Brown vascular tissue', 'Stunted growth'],
+                    'treatment': ['No cure - remove infected plants', 'Apply soil fungicides', 'Improve drainage', 'Add organic matter'],
+                    'prevention': ['Use resistant varieties', 'Crop rotation (3-4 years)', 'Soil solarization', 'Avoid overwatering']
+                }
+            ]
+        }
+        
+        # Default general diseases
+        general_diseases = [
+            {
+                'name': 'Bacterial Leaf Spot',
+                'confidence': 0.87,
+                'severity': 'Medium',
+                'crop': 'Various',
+                'symptoms': ['Water-soaked lesions', 'Yellow halos', 'Leaf curling', 'Fruit spots'],
+                'treatment': ['Remove infected parts', 'Copper spray', 'Improve air circulation', 'Avoid overhead watering'],
+                'prevention': ['Use clean seeds', 'Rotate crops', 'Remove plant debris', 'Proper spacing']
+            },
+            {
+                'name': 'Fungal Leaf Blight',
+                'confidence': 0.84,
+                'severity': 'Medium',
+                'crop': 'Various',
+                'symptoms': ['Brown lesions', 'Leaf yellowing', 'Premature leaf drop', 'Stunted growth'],
+                'treatment': ['Apply fungicide', 'Remove infected leaves', 'Improve drainage', 'Reduce humidity'],
+                'prevention': ['Use resistant varieties', 'Proper spacing', 'Avoid wet foliage', 'Remove debris']
+            },
+            {
+                'name': 'Powdery Mildew',
+                'confidence': 0.90,
+                'severity': 'Low',
+                'crop': 'Various',
+                'symptoms': ['White powdery coating', 'Leaf curling', 'Distorted growth', 'Reduced yield'],
+                'treatment': ['Neem oil spray', 'Sulfur fungicide', 'Improve air circulation', 'Remove severely infected leaves'],
+                'prevention': ['Plant resistant varieties', 'Proper spacing', 'Avoid excess nitrogen', 'Good air circulation']
+            }
+        ]
+        
+        # Try to detect based on random selection
+        crops = list(diseases_db.keys())
+        selected_crop = random.choice(crops)
+        diseases = diseases_db[selected_crop]
+        detected = random.choice(diseases)
+        
+        return jsonify({
+            'success': True,
+            'disease': detected['name'],
+            'crop': selected_crop.capitalize(),
+            'confidence': detected['confidence'],
+            'severity': detected['severity'],
+            'symptoms': detected['symptoms'],
+            'treatment': detected['treatment'],
+            'prevention': detected['prevention']
+        })
+        
+    except Exception as e:
+        print(f"Disease detection error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+# Original Disease Detection Endpoint (keeping for compatibility)
 @app.route('/api/disease-detection', methods=['POST'])
 def detect_disease():
     """

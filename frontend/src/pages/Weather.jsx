@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Cloud, Droplets, Wind, Gauge, Eye, Sunrise, Sunset, MapPin, Search, AlertTriangle, Sprout, TrendingUp, CloudRain, Sun, Thermometer } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { Cloud, Droplets, Wind, Gauge, Eye, Sunrise, Sunset, MapPin, Search, AlertTriangle, Sprout, TrendingUp, CloudRain, Sun, Thermometer, RefreshCw, Loader } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, AreaChart, Area } from 'recharts';
 import { weatherService } from '../services/api';
 
 function Weather() {
@@ -9,9 +9,10 @@ function Weather() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [location, setLocation] = useState({ lat: 11.0168, lon: 76.9558, name: 'Coimbatore' });
+  const [location, setLocation] = useState({ lat: 11.0168, lon: 76.9558, name: 'Coimbatore, Tamil Nadu' });
   const [searchCity, setSearchCity] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchWeather();
@@ -23,9 +24,7 @@ function Weather() {
     try {
       setLoading(true);
       setError(null);
-      console.log('Fetching weather for:', location);
       const data = await weatherService.getWeather(location.lat, location.lon);
-      console.log('Weather data received:', data);
       setWeather(data);
     } catch (error) {
       console.error('Error fetching weather:', error);
@@ -53,14 +52,20 @@ function Weather() {
       });
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchWeather();
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchCity.trim()) {
       setLocation({ ...location, name: searchCity });
-      fetchWeather();
+      setSearchCity('');
     }
   };
 
@@ -142,26 +147,12 @@ function Weather() {
     return insights;
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="card animate-pulse">
-          <div className="h-48 bg-gray-200 rounded"></div>
-        </div>
-        <div className="grid md:grid-cols-3 gap-4">
-          {[1,2,3].map(i => <div key={i} className="card animate-pulse h-32 bg-gray-200"></div>)}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
+  if (loading && !weather) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <p className="text-xl text-gray-700 mb-4">{error}</p>
-          <button onClick={fetchWeather} className="btn-primary">Retry</button>
+          <Loader className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-gray-600">Loading weather data...</p>
         </div>
       </div>
     );
@@ -183,8 +174,8 @@ function Weather() {
       <div className="card">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-              <Cloud className="w-8 h-8 text-primary" />
+            <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
+              <Cloud className="w-10 h-10 text-primary" />
               Weather Dashboard
             </h2>
             <div className="flex items-center gap-2 mt-2 text-gray-600">
@@ -209,6 +200,25 @@ function Weather() {
             <button onClick={useCurrentLocation} className="btn-secondary">
               <MapPin className="w-5 h-5" />
             </button>
+            <button onClick={handleRefresh} className="btn-secondary" disabled={refreshing}>
+              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Image */}
+      <div className="relative rounded-2xl overflow-hidden h-48">
+        <img 
+          src="https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1200&q=80"
+          alt="Weather"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/70 to-transparent"></div>
+        <div className="absolute inset-0 flex items-center p-8">
+          <div className="text-white">
+            <h3 className="text-2xl font-bold">7-Day Weather Forecast</h3>
+            <p className="text-green-100">Plan your farming activities with accurate weather predictions</p>
           </div>
         </div>
       </div>
@@ -255,27 +265,28 @@ function Weather() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white bg-opacity-20 backdrop-blur rounded-xl p-4 hover:bg-opacity-30 transition-all">
+            <div className="bg-white/20 backdrop-blur rounded-xl p-4 hover:bg-white/30 transition-all">
               <Droplets className="w-6 h-6 mb-2" />
               <p className="text-sm opacity-90">Humidity</p>
               <p className="text-3xl font-bold">{weather?.current.humidity}%</p>
             </div>
-            <div className="bg-white bg-opacity-20 backdrop-blur rounded-xl p-4 hover:bg-opacity-30 transition-all">
+            <div className="bg-white/20 backdrop-blur rounded-xl p-4 hover:bg-white/30 transition-all">
               <Wind className="w-6 h-6 mb-2" />
               <p className="text-sm opacity-90">Wind Speed</p>
               <p className="text-3xl font-bold">{weather?.current.wind_speed}</p>
               <p className="text-xs opacity-75">km/h</p>
             </div>
-            <div className="bg-white bg-opacity-20 backdrop-blur rounded-xl p-4 hover:bg-opacity-30 transition-all">
+            <div className="bg-white/20 backdrop-blur rounded-xl p-4 hover:bg-white/30 transition-all">
               <Gauge className="w-6 h-6 mb-2" />
               <p className="text-sm opacity-90">Pressure</p>
               <p className="text-3xl font-bold">{weather?.current.pressure}</p>
               <p className="text-xs opacity-75">hPa</p>
             </div>
-            <div className="bg-white bg-opacity-20 backdrop-blur rounded-xl p-4 hover:bg-opacity-30 transition-all">
-              <Eye className="w-6 h-6 mb-2" />
-              <p className="text-sm opacity-90">Visibility</p>
-              <p className="text-2xl font-bold">Good</p>
+            <div className="bg-white/20 backdrop-blur rounded-xl p-4 hover:bg-white/30 transition-all">
+              <Sun className="w-6 h-6 mb-2" />
+              <p className="text-sm opacity-90">UV Index</p>
+              <p className="text-2xl font-bold">5</p>
+              <p className="text-xs opacity-75">Moderate</p>
             </div>
           </div>
         </div>
@@ -302,14 +313,20 @@ function Weather() {
         <div className="card">
           <h3 className="text-xl font-bold text-gray-800 mb-4">Temperature Trend (7 Days)</h3>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={chartData}>
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="colorTemp" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#2E7D32" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#2E7D32" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="date" stroke="#6b7280" />
               <YAxis stroke="#6b7280" />
               <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }} />
-              <Line type="monotone" dataKey="max" stroke="#2E7D32" strokeWidth={3} name="Max Temp" dot={{ fill: '#2E7D32', r: 4 }} />
-              <Line type="monotone" dataKey="min" stroke="#4FC3F7" strokeWidth={3} name="Min Temp" dot={{ fill: '#4FC3F7', r: 4 }} />
-            </LineChart>
+              <Area type="monotone" dataKey="max" stroke="#2E7D32" fillOpacity={1} fill="url(#colorTemp)" strokeWidth={3} name="Max Temp" />
+              <Area type="monotone" dataKey="min" stroke="#4FC3F7" strokeWidth={3} name="Min Temp" />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
         <div className="card">
@@ -328,31 +345,35 @@ function Weather() {
 
       {/* 7-Day Forecast Cards */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">7-Day Forecast</h3>
+        <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <Calendar className="w-6 h-6 text-primary" />
+          7-Day Forecast
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
           {weather?.forecast.map((day, index) => (
-            <div key={index} className="card bg-gradient-to-br from-white to-gray-50 hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <div key={index} className="card bg-gradient-to-br from-white to-gray-50 hover:shadow-xl transition-all transform hover:-translate-y-1 text-center">
               <p className="text-sm font-semibold text-gray-600 mb-2">
-                {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
+              </p>
+              <p className="text-xs text-gray-500 mb-1">
+                {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </p>
               <img 
                 src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`}
                 alt="weather"
-                className="w-16 h-16 mx-auto"
+                className="w-12 h-12 mx-auto"
               />
-              <div className="text-center mt-2">
-                <p className="text-2xl font-bold text-red-600">{day.temp_max}°</p>
-                <p className="text-lg text-blue-600">{day.temp_min}°</p>
+              <div className="mt-2">
+                <p className="text-lg font-bold text-red-600">{day.temp_max}°</p>
+                <p className="text-sm text-blue-600">{day.temp_min}°</p>
               </div>
               <div className="mt-3 space-y-1 text-xs text-gray-600">
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1"><Droplets className="w-3 h-3" /> Humidity</span>
-                  <span className="font-semibold">{day.humidity}%</span>
+                <div className="flex items-center justify-center gap-1">
+                  <Droplets className="w-3 h-3" /> {day.humidity}%
                 </div>
                 {day.rainfall > 0 && (
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1"><CloudRain className="w-3 h-3" /> Rain</span>
-                    <span className="font-semibold">{day.rainfall}mm</span>
+                  <div className="flex items-center justify-center gap-1 text-blue-500">
+                    <CloudRain className="w-3 h-3" /> {day.rainfall}mm
                   </div>
                 )}
               </div>
@@ -368,15 +389,15 @@ function Weather() {
           Crop Suitability Based on Weather
         </h3>
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-4">
+          <div className="bg-white/20 backdrop-blur rounded-lg p-4">
             <h4 className="font-bold mb-2">Highly Suitable</h4>
             <p className="text-sm">Rice, Cotton, Maize</p>
           </div>
-          <div className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-4">
+          <div className="bg-white/20 backdrop-blur rounded-lg p-4">
             <h4 className="font-bold mb-2">Moderately Suitable</h4>
             <p className="text-sm">Wheat, Groundnut, Soybean</p>
           </div>
-          <div className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-4">
+          <div className="bg-white/20 backdrop-blur rounded-lg p-4">
             <h4 className="font-bold mb-2">Irrigation Needed</h4>
             <p className="text-sm">Tomato, Potato, Onion</p>
           </div>

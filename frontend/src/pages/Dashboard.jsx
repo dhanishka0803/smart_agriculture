@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Cloud, Droplets, Wind, AlertTriangle, Sprout, TrendingUp, ArrowRight, Gauge, Eye } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Cloud, Droplets, Wind, AlertTriangle, Sprout, TrendingUp, ArrowRight, Gauge, Eye, Sun, Moon, Sunrise, Sunset, Calendar, MapPin, RefreshCw } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { weatherService, alertService } from '../services/api';
 
 function Dashboard() {
@@ -12,7 +12,8 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [location] = useState({ lat: 11.0168, lon: 76.9558, name: 'Coimbatore' });
+  const [location] = useState({ lat: 11.0168, lon: 76.9558, name: 'Coimbatore, Tamil Nadu' });
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -23,17 +24,20 @@ function Dashboard() {
   const fetchData = async () => {
     try {
       setError(null);
+      setLoading(true);
       console.log('Fetching dashboard data...');
+      
       const weatherData = await weatherService.getWeather(location.lat, location.lon);
       console.log('Weather data:', weatherData);
       setWeather(weatherData);
+      setLastUpdated(new Date());
 
       const alertData = await alertService.generateAlerts({
         forecast: weatherData.forecast,
         current_temp: weatherData.current.temp
       });
       console.log('Alert data:', alertData);
-      setAlerts(alertData.alerts);
+      setAlerts(alertData.alerts || []);
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Weather data currently unavailable');
@@ -72,6 +76,13 @@ function Dashboard() {
     return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -80,38 +91,38 @@ function Dashboard() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <p className="text-xl text-gray-700">{error}</p>
-          <button onClick={fetchData} className="btn-primary mt-4">{t('retry') || 'Retry'}</button>
-        </div>
-      </div>
-    );
-  }
-
   const chartData = weather?.forecast.map(day => ({
     date: new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     max: day.temp_max,
-    min: day.temp_min
+    min: day.temp_min,
+    humidity: day.humidity
   }));
 
   return (
     <div className="space-y-6">
-      {/* Location and Time */}
-      <div className="card relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80" alt="Farm" className="w-full h-full object-cover" />
-        </div>
-        <div className="flex items-center justify-between relative z-10">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">{location.name}</h2>
-            <p className="text-gray-600">{formatDate(currentTime)}</p>
-            <p className="text-3xl font-bold text-primary mt-2">{formatTime(currentTime)}</p>
+      {/* Header with Background Image */}
+      <div className="relative rounded-2xl overflow-hidden">
+        <img 
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&q=80" 
+          alt="Farm" 
+          className="w-full h-40 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary-dark/60"></div>
+        <div className="relative z-10 p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-green-200 text-sm">{getGreeting()}! 👋</p>
+              <h2 className="text-3xl font-bold mt-1">{location.name}</h2>
+              <p className="text-green-100 mt-1">{formatDate(currentTime)} • {formatTime(currentTime)}</p>
+            </div>
+            <button
+              onClick={fetchData}
+              className="bg-white/20 hover:bg-white/30 p-3 rounded-xl transition-all"
+              title="Refresh data"
+            >
+              <RefreshCw className="w-6 h-6" />
+            </button>
           </div>
-          <Cloud className="w-16 h-16 text-secondary" />
         </div>
       </div>
 
@@ -138,8 +149,11 @@ function Dashboard() {
       )}
 
       {/* Current Weather - Large Display */}
-      <div className="card gradient-blue text-white">
-        <div className="grid md:grid-cols-2 gap-8">
+      <div className="card gradient-blue text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 opacity-10">
+          <Cloud className="w-64 h-64" />
+        </div>
+        <div className="relative z-10 grid md:grid-cols-2 gap-8">
           <div className="flex items-center space-x-6">
             <img 
               src={`https://openweathermap.org/img/wn/${weather?.current.icon}@4x.png`}
@@ -153,132 +167,152 @@ function Dashboard() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white bg-opacity-20 rounded-lg p-4">
+            <div className="bg-white/20 backdrop-blur rounded-xl p-4">
               <div className="flex items-center space-x-2 mb-2">
                 <Droplets className="w-5 h-5" />
                 <p className="text-sm">{t('humidity')}</p>
               </div>
               <p className="text-3xl font-bold">{weather?.current.humidity}%</p>
             </div>
-            <div className="bg-white bg-opacity-20 rounded-lg p-4">
+            <div className="bg-white/20 backdrop-blur rounded-xl p-4">
               <div className="flex items-center space-x-2 mb-2">
                 <Wind className="w-5 h-5" />
                 <p className="text-sm">{t('windSpeed')}</p>
               </div>
               <p className="text-3xl font-bold">{weather?.current.wind_speed}</p>
-              <p className="text-xs">km/h</p>
+              <p className="text-xs opacity-75">km/h</p>
             </div>
-            <div className="bg-white bg-opacity-20 rounded-lg p-4">
+            <div className="bg-white/20 backdrop-blur rounded-xl p-4">
               <div className="flex items-center space-x-2 mb-2">
                 <Gauge className="w-5 h-5" />
                 <p className="text-sm">{t('pressure')}</p>
               </div>
               <p className="text-3xl font-bold">{weather?.current.pressure}</p>
-              <p className="text-xs">hPa</p>
+              <p className="text-xs opacity-75">hPa</p>
             </div>
-            <div className="bg-white bg-opacity-20 rounded-lg p-4">
+            <div className="bg-white/20 backdrop-blur rounded-xl p-4">
               <div className="flex items-center space-x-2 mb-2">
-                <Eye className="w-5 h-5" />
-                <p className="text-sm">{t('visibility')}</p>
+                <Sun className="w-5 h-5" />
+                <p className="text-sm">UV Index</p>
               </div>
-              <p className="text-3xl font-bold">{t('good')}</p>
+              <p className="text-3xl font-bold">5</p>
+              <p className="text-xs opacity-75">Moderate</p>
             </div>
           </div>
         </div>
+        {lastUpdated && (
+          <p className="text-xs text-white/60 mt-4 text-right">Last updated: {lastUpdated.toLocaleTimeString()}</p>
+        )}
       </div>
 
       {/* Temperature Trend Chart */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">{t('temperatureTrend')}</h3>
+        <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+          <TrendingUp className="w-6 h-6 mr-2 text-primary" />
+          Temperature Trend (7 Days)
+        </h3>
         <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="colorMax" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#2E7D32" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#2E7D32" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="colorMin" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#4FC3F7" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#4FC3F7" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="max" stroke="#2E7D32" strokeWidth={3} name={t('maxTemp')} />
-            <Line type="monotone" dataKey="min" stroke="#4FC3F7" strokeWidth={3} name={t('minTemp')} />
-          </LineChart>
+            <Area type="monotone" dataKey="max" stroke="#2E7D32" fillOpacity={1} fill="url(#colorMax)" strokeWidth={3} name="Max Temp" />
+            <Area type="monotone" dataKey="min" stroke="#4FC3F7" fillOpacity={1} fill="url(#colorMin)" strokeWidth={3} name="Min Temp" />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <Link to="/crop-advice" className="card hover:scale-105 transition-transform cursor-pointer border-2 border-transparent hover:border-primary">
-          <div className="flex items-center space-x-4">
-            <div className="bg-primary text-white p-4 rounded-lg">
-              <Sprout className="w-8 h-8" />
+      <div>
+        <h3 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+        <div className="grid md:grid-cols-3 gap-4">
+          <Link to="/crop-advice" className="card hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-primary">
+            <div className="flex items-center space-x-4">
+              <div className="bg-primary text-white p-4 rounded-xl">
+                <Sprout className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-gray-800">Get Crop Advice</h3>
+                <p className="text-sm text-gray-600">AI-powered recommendations</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-lg text-gray-800">{t('getCropAdvice')}</h3>
-              <p className="text-sm text-gray-600">{t('aiPowered')}</p>
-            </div>
-          </div>
-        </Link>
+          </Link>
 
-        <Link to="/irrigation" className="card hover:scale-105 transition-transform cursor-pointer border-2 border-transparent hover:border-secondary">
-          <div className="flex items-center space-x-4">
-            <div className="bg-secondary text-white p-4 rounded-lg">
-              <Droplets className="w-8 h-8" />
+          <Link to="/irrigation" className="card hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-secondary">
+            <div className="flex items-center space-x-4">
+              <div className="bg-secondary text-white p-4 rounded-xl">
+                <Droplets className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-gray-800">Irrigation Advisor</h3>
+                <p className="text-sm text-gray-600">Smart water management</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-lg text-gray-800">{t('irrigationAdvisor')}</h3>
-              <p className="text-sm text-gray-600">{t('smartWater')}</p>
-            </div>
-          </div>
-        </Link>
+          </Link>
 
-        <Link to="/profit" className="card hover:scale-105 transition-transform cursor-pointer border-2 border-transparent hover:border-green-600">
-          <div className="flex items-center space-x-4">
-            <div className="bg-green-600 text-white p-4 rounded-lg">
-              <TrendingUp className="w-8 h-8" />
+          <Link to="/profit" className="card hover:scale-[1.02] transition-transform cursor-pointer border-2 border-transparent hover:border-green-600">
+            <div className="flex items-center space-x-4">
+              <div className="bg-green-600 text-white p-4 rounded-xl">
+                <TrendingUp className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-gray-800">Profit Calculator</h3>
+                <p className="text-sm text-gray-600">Estimate your income</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-lg text-gray-800">{t('profitCalculator')}</h3>
-              <p className="text-sm text-gray-600">{t('estimateIncome')}</p>
-            </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
       </div>
 
       {/* Detailed 7-Day Forecast */}
       <div className="card">
         <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <Cloud className="w-6 h-6 mr-2 text-primary" />
-          {t('detailedForecast')}
+          <Calendar className="w-6 h-6 mr-2 text-primary" />
+          7-Day Forecast
         </h3>
         <div className="space-y-3">
           {weather?.forecast.map((day, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
               <div className="flex items-center space-x-4 flex-1">
-                <p className="font-bold text-gray-800 w-24">
+                <p className="font-bold text-gray-800 w-28">
                   {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                 </p>
                 <img 
                   src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`}
                   alt="weather icon"
-                  className="w-16 h-16"
+                  className="w-12 h-12"
                 />
                 <p className="text-sm text-gray-600 capitalize flex-1">{day.description}</p>
               </div>
               
               <div className="flex items-center space-x-6">
-                <div className="text-center">
-                  <p className="text-xs text-gray-500">{t('high')}</p>
-                  <p className="text-2xl font-bold text-red-600">{day.temp_max}°C</p>
+                <div className="text-center w-16">
+                  <p className="text-xs text-gray-500">High</p>
+                  <p className="text-xl font-bold text-red-500">{day.temp_max}°C</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-xs text-gray-500">{t('low')}</p>
-                  <p className="text-2xl font-bold text-blue-600">{day.temp_min}°C</p>
+                <div className="text-center w-16">
+                  <p className="text-xs text-gray-500">Low</p>
+                  <p className="text-xl font-bold text-blue-500">{day.temp_min}°C</p>
                 </div>
-                <div className="text-center">
-                  <Droplets className="w-5 h-5 text-secondary mx-auto" />
-                  <p className="text-lg font-bold text-secondary">{day.humidity}%</p>
+                <div className="text-center w-16">
+                  <Droplets className="w-4 h-4 text-secondary mx-auto" />
+                  <p className="text-sm font-bold text-secondary">{day.humidity}%</p>
                 </div>
                 {day.rainfall > 0 && (
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500">{t('rainfall')}</p>
-                    <p className="text-lg font-bold text-blue-500">{day.rainfall}mm</p>
+                  <div className="text-center w-16">
+                    <p className="text-xs text-gray-500">Rain</p>
+                    <p className="text-sm font-bold text-blue-500">{day.rainfall}mm</p>
                   </div>
                 )}
               </div>
