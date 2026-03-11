@@ -43,8 +43,9 @@ function DiseaseDetection() {
     formData.append('file', selectedImage);
 
     try {
-      // Use FastAPI ML endpoint
-      const response = await fetch('http://localhost:8000/predict-disease', {
+      // Use deployed backend API
+      const apiUrl = 'https://smart-agriculture-4pz4.onrender.com';
+      const response = await fetch(`${apiUrl}/predict-disease`, {
         method: 'POST',
         body: formData
       });

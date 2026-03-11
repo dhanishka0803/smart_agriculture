@@ -13,6 +13,8 @@ import numpy as np
 import io
 import json
 import os
+import requests
+import zipfile
 from typing import Dict, Any
 
 app = FastAPI(title="AgriSense AI - Disease Detection API")
@@ -40,9 +42,60 @@ IMG_SIZE = 224
 CONFIDENCE_THRESHOLD = 0.5
 PLANT_CONFIDENCE_THRESHOLD = 0.3
 
+# Google Drive model URL (set this as environment variable)
+MODEL_DOWNLOAD_URL = os.getenv('MODEL_DOWNLOAD_URL', '')
+
+def download_model_from_cloud():
+    """Download model from cloud storage if not present"""
+    model_dir = 'ml_model'
+    model_path = os.path.join(model_dir, 'plant_disease_model.h5')
+    
+    # Check if model already exists
+    if os.path.exists(model_path):
+        print("✅ Model already exists locally")
+        return True
+    
+    # Check if download URL is set
+    if not MODEL_DOWNLOAD_URL:
+        print("⚠️ MODEL_DOWNLOAD_URL not set. Using mock predictions.")
+        return False
+    
+    try:
+        print("📥 Downloading model from cloud storage...")
+        os.makedirs(model_dir, exist_ok=True)
+        
+        # Download model file
+        response = requests.get(MODEL_DOWNLOAD_URL, stream=True)
+        response.raise_for_status()
+        
+        zip_path = os.path.join(model_dir, 'model.zip')
+        
+        # Save ZIP file
+        with open(zip_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        
+        print("📦 Extracting model files...")
+        # Extract ZIP
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(model_dir)
+        
+        # Remove ZIP file
+        os.remove(zip_path)
+        
+        print("✅ Model downloaded and extracted successfully!")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error downloading model: {e}")
+        return False
+
 def load_model():
     """Load the trained model"""
     global model, class_names, disease_info
+    
+    # Try to download model from cloud if not present
+    download_model_from_cloud()
     
     try:
         # Try loading SavedModel format

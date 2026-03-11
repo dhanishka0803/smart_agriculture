@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import os
 import json
 from groq import Groq
+import subprocess
+import sys
 
 app = Flask(__name__)
 # Allow both production and local frontend URLs
@@ -26,7 +28,20 @@ try:
 except:
     groq_client = None
 
-# No database or ML model needed for demo
+# Start ML API in background
+def start_ml_api():
+    """Start the ML API server in background"""
+    try:
+        # Check if disease_api.py exists
+        if os.path.exists('disease_api.py'):
+            print("🚀 Starting ML API server...")
+            subprocess.Popen([sys.executable, 'disease_api.py'])
+            print("✅ ML API server started on port 8000")
+    except Exception as e:
+        print(f"⚠️ Could not start ML API: {e}")
+
+# Start ML API on app startup
+start_ml_api()
 
 # Crop database
 CROPS_DATA = {
