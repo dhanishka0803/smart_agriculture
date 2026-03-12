@@ -174,62 +174,42 @@ function LandingPage() {
 
         <div className="container mx-auto px-4 h-full relative z-10 flex items-center">
           <div className="max-w-3xl text-white">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full mb-6">
-              <Zap className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-semibold">Trusted by 100,000+ Farmers</span>
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-fade-in-up">
               Climate-Smart
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-300">
                 Farming with AI
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-green-100 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-green-100 mb-8 leading-relaxed animate-fade-in-up delay-200">
               Increase yields by 25%, save 40% water, and boost profits with real-time weather intelligence, 
               AI-powered crop recommendations, and smart farming tools.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-fade-in-up delay-300">
               <Link to="/register" className="btn-primary text-lg px-8 py-4 inline-flex items-center justify-center gap-2">
-                Start Free Trial <ArrowRight className="w-5 h-5" />
+                Get Started Free <ArrowRight className="w-5 h-5" />
               </Link>
               <Link to="/dashboard" className="bg-white/20 backdrop-blur text-white border-2 border-white/30 hover:bg-white/30 text-lg px-8 py-4 rounded-xl font-semibold inline-flex items-center justify-center gap-2 transition-all">
                 <Cloud className="w-5 h-5" />
                 View Demo
               </Link>
             </div>
-
-            <div className="flex flex-wrap gap-8 text-sm text-green-200">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>No credit card required</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>14-day free trial</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>Cancel anytime</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 bg-white dark:bg-gray-800">
+      <section className="py-20 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-                  <stat.icon className="w-8 h-8 text-primary" />
+              <div key={index} className="text-center animate-fade-in-up" style={{animationDelay: `${index * 100}ms`}}>
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary to-primary-light rounded-2xl mb-4 shadow-lg">
+                  <stat.icon className="w-10 h-10 text-white" />
                 </div>
                 <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{stat.value}</div>
-                <div className="text-gray-600 dark:text-gray-300">{stat.label}</div>
+                <div className="text-gray-600 dark:text-gray-300 font-medium">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -237,10 +217,10 @@ function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
+      <section className="py-24 bg-gradient-to-br from-gray-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-white mb-4">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-white mb-6">
               Everything You Need to Succeed
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -250,11 +230,11 @@ function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6`}>
+              <div key={index} className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 border-2 border-transparent hover:border-primary animate-fade-in-up" style={{animationDelay: `${index * 100}ms`}}>
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-lg`}>
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">{feature.title}</h3>
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">{feature.title}</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.description}</p>
               </div>
             ))}
@@ -263,24 +243,24 @@ function LandingPage() {
       </section>
 
       {/* Crop Gallery Section */}
-      <section className="py-20 bg-white dark:bg-gray-800">
+      <section className="py-24 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-white mb-4">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-white mb-6">
               Farms Across India
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">Trusted by farmers in every state</p>
+            <p className="text-xl text-gray-600 dark:text-gray-300">Empowering farmers in every state</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {cropImages.map((crop, index) => (
-              <div key={index} className="relative group overflow-hidden rounded-xl">
+              <div key={index} className="relative group overflow-hidden rounded-2xl shadow-lg animate-fade-in-up" style={{animationDelay: `${index * 100}ms`}}>
                 <img 
                   src={crop.src} 
                   alt={crop.name} 
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-4 left-4 text-white">
                     <p className="font-bold text-lg">{crop.name}</p>
                     <p className="text-sm text-green-300 flex items-center gap-1">
@@ -295,10 +275,10 @@ function LandingPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-br from-primary to-green-800 text-white">
+      <section className="py-24 bg-gradient-to-br from-primary to-green-800 text-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Loved by Farmers Across India
             </h2>
             <p className="text-xl text-green-100">Real stories from real farmers</p>
@@ -306,8 +286,8 @@ function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white/10 backdrop-blur p-8 rounded-2xl">
-                <div className="flex items-center gap-4 mb-4">
+              <div key={index} className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition-all hover:-translate-y-2 shadow-xl animate-fade-in-up" style={{animationDelay: `${index * 100}ms`}}>
+                <div className="flex items-center gap-4 mb-6">
                   <div className="text-5xl">{testimonial.image}</div>
                   <div>
                     <div className="font-bold text-lg">{testimonial.name}</div>
@@ -319,7 +299,7 @@ function LandingPage() {
                     <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <p className="text-green-50 italic">"{testimonial.text}"</p>
+                <p className="text-green-50 italic leading-relaxed">"{testimonial.text}"</p>
               </div>
             ))}
           </div>
@@ -327,10 +307,10 @@ function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-900">
+      <section className="py-24 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-white mb-4">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold text-primary dark:text-white mb-6">
               Simple, Transparent Pricing
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300">Choose the plan that fits your farm</p>
@@ -338,21 +318,21 @@ function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {pricingPlans.map((plan, index) => (
-              <div key={index} className={`bg-white dark:bg-gray-800 rounded-2xl overflow-hidden ${plan.popular ? 'ring-4 ring-primary scale-105' : ''} shadow-xl`}>
+              <div key={index} className={`bg-white dark:bg-gray-800 rounded-2xl overflow-hidden ${plan.popular ? 'ring-4 ring-primary scale-105 shadow-2xl' : 'shadow-xl'} hover:-translate-y-2 transition-all animate-fade-in-up`} style={{animationDelay: `${index * 100}ms`}}>
                 {plan.popular && (
-                  <div className="bg-gradient-to-r from-accent-pink to-accent-pinkLight text-primary font-bold text-sm px-4 py-2 text-center">
-                    Most Popular
+                  <div className="bg-gradient-to-r from-primary to-primary-light text-white font-bold text-sm px-4 py-2 text-center">
+                    ⭐ Most Popular
                   </div>
                 )}
                 <div className="p-8">
                   <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{plan.name}</h3>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold text-primary">{plan.price}</span>
+                    <span className="text-5xl font-bold text-primary">{plan.price}</span>
                     <span className="text-gray-500 ml-2 dark:text-gray-400">/ {plan.period}</span>
                   </div>
-                  <ul className="space-y-3 mb-8">
+                  <ul className="space-y-4 mb-8">
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                      <li key={i} className="flex items-start gap-3 text-gray-700 dark:text-gray-300">
                         <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                         <span>{feature}</span>
                       </li>
@@ -372,19 +352,19 @@ function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary to-green-700 text-white">
+      <section className="py-24 bg-gradient-to-r from-primary to-green-700 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-8 animate-fade-in-up">
             Ready to Transform Your Farm?
           </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join 100,000+ farmers who are already using AgriSense AI to increase yields and profits
+          <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto animate-fade-in-up delay-100">
+            Start your journey towards smarter, more profitable farming today
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/register" className="bg-white text-primary px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all shadow-lg text-lg inline-flex items-center gap-2">
-              Start Free Trial <ArrowRight className="w-5 h-5" />
+          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up delay-200">
+            <Link to="/register" className="bg-white text-primary px-10 py-5 rounded-xl font-semibold hover:bg-gray-100 transition-all shadow-2xl text-lg inline-flex items-center gap-2 hover:-translate-y-1">
+              Get Started Free <ArrowRight className="w-5 h-5" />
             </Link>
-            <Link to="/dashboard" className="bg-white/20 backdrop-blur text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/30 transition-all border-2 border-white text-lg inline-flex items-center gap-2">
+            <Link to="/dashboard" className="bg-white/20 backdrop-blur text-white px-10 py-5 rounded-xl font-semibold hover:bg-white/30 transition-all border-2 border-white text-lg inline-flex items-center gap-2 hover:-translate-y-1">
               <Cloud className="w-5 h-5" />
               View Demo
             </Link>

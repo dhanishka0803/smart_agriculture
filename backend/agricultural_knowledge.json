@@ -1,0 +1,208 @@
+{
+  "crops": {
+    "kharif": {
+      "season": "Monsoon (June-October)",
+      "crops": ["Rice", "Maize", "Cotton", "Groundnut", "Soybean", "Bajra", "Jowar"],
+      "description": "Kharif crops are sown at the beginning of monsoon season and harvested in autumn.",
+      "tips": [
+        "Ensure proper drainage to prevent waterlogging",
+        "Monitor rainfall patterns closely",
+        "Apply pre-monsoon fertilizers",
+        "Prepare fields before monsoon arrival"
+      ]
+    },
+    "rabi": {
+      "season": "Winter (October-March)",
+      "crops": ["Wheat", "Barley", "Mustard", "Chickpea", "Peas", "Lentils"],
+      "description": "Rabi crops are sown in winter and harvested in spring.",
+      "tips": [
+        "Requires less water than kharif crops",
+        "Protect from frost in extreme cold",
+        "Apply nitrogen fertilizers in split doses",
+        "Ensure adequate irrigation during dry spells"
+      ]
+    },
+    "zaid": {
+      "season": "Summer (March-June)",
+      "crops": ["Watermelon", "Cucumber", "Muskmelon", "Bitter Gourd", "Pumpkin"],
+      "description": "Zaid crops are grown between rabi and kharif seasons.",
+      "tips": [
+        "Requires frequent irrigation",
+        "Protect from extreme heat",
+        "Use mulching to retain moisture",
+        "Harvest before monsoon arrives"
+      ]
+    }
+  },
+  "irrigation": {
+    "best_time": {
+      "answer": "The best time to irrigate crops is early morning (5-8 AM) or late evening (5-8 PM).",
+      "reasons": [
+        "Reduces water evaporation by 30-40%",
+        "Improves soil water absorption",
+        "Prevents leaf burn from water droplets",
+        "Maintains optimal soil temperature"
+      ]
+    },
+    "methods": {
+      "drip": {
+        "name": "Drip Irrigation",
+        "water_saving": "40-60%",
+        "best_for": ["Vegetables", "Fruits", "Cotton"],
+        "benefits": ["Precise water delivery", "Reduces weed growth", "Prevents soil erosion"]
+      },
+      "sprinkler": {
+        "name": "Sprinkler Irrigation",
+        "water_saving": "30-40%",
+        "best_for": ["Wheat", "Maize", "Vegetables"],
+        "benefits": ["Uniform water distribution", "Suitable for uneven terrain", "Reduces labor"]
+      },
+      "flood": {
+        "name": "Flood Irrigation",
+        "water_saving": "0%",
+        "best_for": ["Rice", "Sugarcane"],
+        "benefits": ["Simple method", "Low initial cost", "Traditional practice"]
+      }
+    },
+    "frequency": {
+      "summer": "Every 2-3 days",
+      "winter": "Every 7-10 days",
+      "monsoon": "As needed based on rainfall"
+    }
+  },
+  "soil": {
+    "types": {
+      "loamy": {
+        "description": "Best soil for most crops - mixture of sand, silt, and clay",
+        "suitable_crops": ["Wheat", "Rice", "Cotton", "Vegetables"],
+        "ph_range": "6.0-7.5",
+        "fertility": "High"
+      },
+      "clayey": {
+        "description": "Heavy soil with good water retention",
+        "suitable_crops": ["Rice", "Wheat", "Sugarcane"],
+        "ph_range": "6.5-8.0",
+        "fertility": "Medium to High"
+      },
+      "sandy": {
+        "description": "Light soil with good drainage",
+        "suitable_crops": ["Groundnut", "Watermelon", "Carrots"],
+        "ph_range": "5.5-7.0",
+        "fertility": "Low to Medium"
+      },
+      "black": {
+        "description": "Rich in clay and organic matter",
+        "suitable_crops": ["Cotton", "Soybean", "Wheat"],
+        "ph_range": "7.0-8.5",
+        "fertility": "High"
+      }
+    },
+    "improvement": [
+      "Add organic compost to increase fertility",
+      "Practice crop rotation to maintain soil health",
+      "Use green manure crops like legumes",
+      "Apply balanced NPK fertilizers",
+      "Test soil pH regularly",
+      "Avoid over-irrigation to prevent nutrient leaching"
+    ]
+  },
+  "pests": {
+    "prevention": [
+      "Practice crop rotation to break pest cycles",
+      "Use neem-based organic pesticides",
+      "Maintain field hygiene - remove crop residues",
+      "Plant pest-resistant varieties",
+      "Use pheromone traps for monitoring",
+      "Encourage natural predators (ladybugs, spiders)",
+      "Apply pesticides only when necessary",
+      "Follow integrated pest management (IPM)"
+    ],
+    "common_pests": {
+      "aphids": {
+        "crops_affected": ["Cotton", "Vegetables", "Pulses"],
+        "symptoms": ["Curled leaves", "Sticky honeydew", "Stunted growth"],
+        "control": ["Neem oil spray", "Soap water solution", "Introduce ladybugs"]
+      },
+      "bollworm": {
+        "crops_affected": ["Cotton", "Tomato", "Chickpea"],
+        "symptoms": ["Holes in bolls/fruits", "Damaged flowers"],
+        "control": ["Bt cotton varieties", "Pheromone traps", "Biological control"]
+      },
+      "stem_borer": {
+        "crops_affected": ["Rice", "Sugarcane", "Maize"],
+        "symptoms": ["Dead heart", "White ear head", "Stem tunneling"],
+        "control": ["Remove affected plants", "Use resistant varieties", "Proper water management"]
+      }
+    }
+  },
+  "fertilizers": {
+    "npk": {
+      "nitrogen": {
+        "role": "Promotes leaf and stem growth",
+        "sources": ["Urea", "Ammonium sulfate", "DAP"],
+        "deficiency_signs": ["Yellowing of older leaves", "Stunted growth"]
+      },
+      "phosphorus": {
+        "role": "Promotes root development and flowering",
+        "sources": ["DAP", "SSP", "Rock phosphate"],
+        "deficiency_signs": ["Purple leaves", "Poor root growth"]
+      },
+      "potassium": {
+        "role": "Improves disease resistance and fruit quality",
+        "sources": ["Muriate of potash", "Potassium sulfate"],
+        "deficiency_signs": ["Brown leaf edges", "Weak stems"]
+      }
+    },
+    "organic": [
+      "Farmyard manure (FYM)",
+      "Compost",
+      "Vermicompost",
+      "Green manure",
+      "Biofertilizers"
+    ]
+  },
+  "government_schemes": {
+    "pm_kisan": {
+      "name": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+      "benefit": "₹6,000 per year in 3 installments",
+      "eligibility": "All landholding farmers",
+      "how_to_apply": "Visit pmkisan.gov.in or nearest CSC"
+    },
+    "fasal_bima": {
+      "name": "Pradhan Mantri Fasal Bima Yojana",
+      "benefit": "Crop insurance against natural calamities",
+      "premium": "2% for kharif, 1.5% for rabi crops",
+      "how_to_apply": "Through banks or insurance companies"
+    },
+    "kisan_credit_card": {
+      "name": "Kisan Credit Card (KCC)",
+      "benefit": "Easy credit for farming needs at 4% interest",
+      "loan_amount": "Up to ₹3 lakh",
+      "how_to_apply": "Visit nearest bank branch"
+    },
+    "soil_health_card": {
+      "name": "Soil Health Card Scheme",
+      "benefit": "Free soil testing and recommendations",
+      "frequency": "Every 2 years",
+      "how_to_apply": "Contact local agriculture office"
+    }
+  },
+  "market_tips": [
+    "Check daily mandi rates before selling",
+    "Store produce properly to get better prices",
+    "Sell directly to buyers to avoid middlemen",
+    "Join farmer producer organizations (FPOs)",
+    "Use e-NAM platform for better price discovery",
+    "Consider contract farming for assured prices",
+    "Time your harvest to avoid market glut"
+  ],
+  "general_tips": [
+    "Always use certified seeds from authorized dealers",
+    "Maintain farm records for better planning",
+    "Attend agricultural training programs",
+    "Adopt modern farming techniques gradually",
+    "Diversify crops to reduce risk",
+    "Practice sustainable farming for long-term benefits",
+    "Join farmer groups for knowledge sharing"
+  ]
+}

@@ -36,6 +36,11 @@ function AppContent() {
   const [currentLang, setCurrentLang] = useState('en');
   const [user, setUser] = useState(null);
 
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   useEffect(() => {
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {

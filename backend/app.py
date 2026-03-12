@@ -422,15 +422,12 @@ def profit_estimate():
         'roi': round((net_profit / total_cost) * 100, 2) if total_cost > 0 else 0
     })
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
-
-
 # AI Chatbot Endpoint with Groq LLM
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """
     AI Chatbot powered by Groq LLM (Llama 3 70B)
+    Enhanced with agricultural knowledge base
     """
     data = request.json
     user_message = data.get('message', '')
@@ -439,26 +436,74 @@ def chat():
     if not user_message:
         return jsonify({'error': 'No message provided'}), 400
     
+    # Load agricultural knowledge base
+    knowledge_base = {}
+    try:
+        kb_path = 'agricultural_knowledge.json'
+        if os.path.exists(kb_path):
+            with open(kb_path, 'r') as f:
+                knowledge_base = json.load(f)
+    except Exception as e:
+        print(f"Error loading knowledge base: {e}")
+    
+    # Check if question is agriculture-related
+    agriculture_keywords = [
+        'crop', 'farm', 'soil', 'irrigation', 'water', 'plant', 'seed', 'harvest',
+        'pest', 'disease', 'fertilizer', 'weather', 'rain', 'season', 'kharif', 'rabi',
+        'wheat', 'rice', 'cotton', 'maize', 'vegetable', 'fruit', 'agriculture',
+        'cultivation', 'yield', 'market', 'price', 'mandi', 'scheme', 'subsidy',
+        'organic', 'pesticide', 'manure', 'compost', 'drought', 'flood'
+    ]
+    
+    message_lower = user_message.lower()
+    is_agriculture_related = any(keyword in message_lower for keyword in agriculture_keywords)
+    
+    if not is_agriculture_related:
+        return jsonify({
+            'success': True,
+            'response': "I'm designed to help with farming and agriculture questions. Please ask something related to crops, irrigation, soil, weather, or farming practices.",
+            'model': 'filter'
+        })
+    
     try:
         if groq_client:
+            # Enhanced system prompt with knowledge base
+            system_prompt = """You are an expert agricultural AI assistant for AgriSense AI platform in India.
+            
+Your expertise includes:
+- Crop selection and recommendations (kharif, rabi, zaid seasons)
+- Irrigation methods and water management
+- Soil types, fertility, and improvement
+- Pest and disease control
+- Fertilizer application (NPK, organic)
+- Weather impact on crops
+- Government farming schemes (PM-KISAN, Fasal Bima, KCC)
+- Market prices and selling strategies
+- Sustainable farming practices
+
+IMPORTANT GUIDELINES:
+1. Give practical, actionable advice for Indian farmers
+2. Use simple language, avoid complex technical terms
+3. Provide specific examples and numbers when possible
+4. Consider Indian climate, soil types, and farming practices
+5. Mention government schemes when relevant
+6. Always prioritize farmer's economic benefit
+7. Keep responses concise (3-5 points maximum)
+8. If asked about weather, suggest checking local forecasts
+
+KEY INFORMATION:
+- Kharif season: June-October (Rice, Maize, Cotton, Groundnut, Soybean)
+- Rabi season: October-March (Wheat, Barley, Mustard, Chickpea)
+- Zaid season: March-June (Watermelon, Cucumber, Vegetables)
+- Best irrigation time: Early morning (5-8 AM) or evening (5-8 PM)
+- Drip irrigation saves 40-60% water
+- PM-KISAN: ₹6,000/year for all farmers
+- Soil testing: Free under Soil Health Card scheme
+
+Respond in a friendly, helpful manner as if talking to a farmer."""
+            
             # Build conversation history
-            messages = [
-                {
-                    "role": "system",
-                    "content": """You are an expert agricultural AI assistant for AgriSense AI platform. 
-                    You help farmers with:
-                    - Crop recommendations based on soil, climate, and season
-                    - Pest and disease management
-                    - Irrigation and water management
-                    - Market prices and profit estimation
-                    - Sustainable farming practices
-                    - Weather-based farming advice
-                    
-                    Provide practical, actionable advice in simple language. 
-                    Be concise but thorough. Use bullet points when listing steps.
-                    Always consider Indian farming context and conditions."""
-                }
-            ]
+            messages = [{"role": "system", "content": system_prompt}]
             
             # Add conversation history
             for msg in history[-6:]:
@@ -478,7 +523,7 @@ def chat():
                 messages=messages,
                 model="llama-3.1-70b-versatile",
                 temperature=0.7,
-                max_tokens=1024,
+                max_tokens=512,
                 top_p=0.9
             )
             
@@ -490,32 +535,13 @@ def chat():
                 'model': 'llama-3.1-70b-versatile'
             })
         else:
-            # Fallback responses if Groq is not configured
-            fallback_responses = {
-                'crop': "For crop recommendations, I suggest considering: \n• Soil type (loamy, clayey, sandy)\n• Current season (Kharif, Rabi, Zaid)\n• Expected rainfall\n• Temperature range\n\nUse our Crop Recommendation tool for AI-powered suggestions!",
-                'pest': "For pest management:\n• Regular field monitoring\n• Use neem-based organic pesticides\n• Maintain crop rotation\n• Remove infected plants immediately\n• Consult local agricultural extension officers",
-                'irrigation': "Smart irrigation tips:\n• Check soil moisture before watering\n• Water early morning or evening\n• Use drip irrigation to save 40% water\n• Monitor weather forecasts\n• Adjust based on crop growth stage",
-                'market': "For market information:\n• Check local mandi prices daily\n• Use our Market Predictor tool\n• Consider storage options for better prices\n• Join farmer cooperatives\n• Track seasonal demand patterns",
-                'default': "I can help you with:\n• Crop selection and recommendations\n• Pest and disease management\n• Irrigation scheduling\n• Market prices and trends\n• Weather-based farming advice\n\nWhat specific topic would you like to know more about?"
-            }
-            
-            # Simple keyword matching
-            message_lower = user_message.lower()
-            if any(word in message_lower for word in ['crop', 'plant', 'grow', 'sow']):
-                response = fallback_responses['crop']
-            elif any(word in message_lower for word in ['pest', 'disease', 'insect', 'bug']):
-                response = fallback_responses['pest']
-            elif any(word in message_lower for word in ['water', 'irrigat', 'moisture']):
-                response = fallback_responses['irrigation']
-            elif any(word in message_lower for word in ['price', 'market', 'sell', 'profit']):
-                response = fallback_responses['market']
-            else:
-                response = fallback_responses['default']
+            # Enhanced fallback with knowledge base
+            response = get_knowledge_based_response(user_message, knowledge_base)
             
             return jsonify({
                 'success': True,
                 'response': response,
-                'model': 'fallback'
+                'model': 'knowledge_base'
             })
             
     except Exception as e:
@@ -524,6 +550,116 @@ def chat():
             'success': False,
             'error': 'Failed to process your message. Please try again.'
         }), 500
+
+def get_knowledge_based_response(message, kb):
+    """Generate response from knowledge base"""
+    message_lower = message.lower()
+    
+    # Kharif crops
+    if 'kharif' in message_lower or ('monsoon' in message_lower and 'crop' in message_lower):
+        crops = kb.get('crops', {}).get('kharif', {})
+        return f"""**Kharif Season Crops ({crops.get('season', 'June-October')}):**
+
+Best crops to plant:
+{chr(10).join(['• ' + crop for crop in crops.get('crops', [])])}
+
+**Tips:**
+{chr(10).join(['• ' + tip for tip in crops.get('tips', [])])}
+"""
+    
+    # Rabi crops
+    if 'rabi' in message_lower or ('winter' in message_lower and 'crop' in message_lower):
+        crops = kb.get('crops', {}).get('rabi', {})
+        return f"""**Rabi Season Crops ({crops.get('season', 'October-March')}):**
+
+Best crops to plant:
+{chr(10).join(['• ' + crop for crop in crops.get('crops', [])])}
+
+**Tips:**
+{chr(10).join(['• ' + tip for tip in crops.get('tips', [])])}
+"""
+    
+    # Irrigation
+    if 'irrigat' in message_lower or 'water' in message_lower:
+        irr = kb.get('irrigation', {}).get('best_time', {})
+        return f"""**Best Time to Irrigate:**
+
+{irr.get('answer', 'Early morning or late evening')}
+
+**Why?**
+{chr(10).join(['• ' + reason for reason in irr.get('reasons', [])])}
+
+**Frequency:**
+• Summer: Every 2-3 days
+• Winter: Every 7-10 days
+• Monsoon: Based on rainfall
+"""
+    
+    # Pest control
+    if 'pest' in message_lower or 'insect' in message_lower:
+        pests = kb.get('pests', {}).get('prevention', [])
+        return f"""**Pest Prevention Tips:**
+
+{chr(10).join(['• ' + tip for tip in pests[:6]])}
+
+**Remember:** Use pesticides only when necessary and follow safety guidelines.
+"""
+    
+    # Soil
+    if 'soil' in message_lower:
+        soil_tips = kb.get('soil', {}).get('improvement', [])
+        return f"""**Soil Health Improvement:**
+
+{chr(10).join(['• ' + tip for tip in soil_tips])}
+
+**Tip:** Get free soil testing under Soil Health Card scheme!
+"""
+    
+    # Government schemes
+    if 'scheme' in message_lower or 'subsidy' in message_lower or 'government' in message_lower:
+        schemes = kb.get('government_schemes', {})
+        pm_kisan = schemes.get('pm_kisan', {})
+        fasal = schemes.get('fasal_bima', {})
+        return f"""**Government Schemes for Farmers:**
+
+1. **{pm_kisan.get('name', 'PM-KISAN')}**
+   • Benefit: {pm_kisan.get('benefit', '₹6,000/year')}
+   • Apply: {pm_kisan.get('how_to_apply', 'pmkisan.gov.in')}
+
+2. **{fasal.get('name', 'Fasal Bima Yojana')}**
+   • Benefit: {fasal.get('benefit', 'Crop insurance')}
+   • Premium: {fasal.get('premium', '2% for kharif')}
+
+3. **Kisan Credit Card**
+   • Easy loans at 4% interest
+   • Up to ₹3 lakh
+"""
+    
+    # Market prices
+    if 'market' in message_lower or 'price' in message_lower or 'sell' in message_lower:
+        tips = kb.get('market_tips', [])
+        return f"""**Market & Selling Tips:**
+
+{chr(10).join(['• ' + tip for tip in tips])}
+
+**Use e-NAM platform** for better price discovery!
+"""
+    
+    # Default response
+    return """I can help you with:
+
+• **Crop Selection** - What to plant in different seasons
+• **Irrigation** - When and how to water crops
+• **Soil Health** - Improving soil fertility
+• **Pest Control** - Preventing and managing pests
+• **Government Schemes** - PM-KISAN, Fasal Bima, etc.
+• **Market Prices** - Selling strategies
+• **Weather Impact** - Climate-based farming advice
+
+What would you like to know about?"""
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
 
 
 # Disease Detection Endpoint
