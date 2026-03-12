@@ -20,7 +20,7 @@ const config = {
 // CHANGE THIS FOR YOUR DEMO
 // Set to 'local' when running ML API on your laptop
 // Set to 'production' when using deployed version
-const CURRENT_ENV = 'local';
+const CURRENT_ENV = 'production';
 
 export const API_CONFIG = config[CURRENT_ENV];
 

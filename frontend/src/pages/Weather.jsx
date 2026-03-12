@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Cloud, Droplets, Wind, Gauge, Eye, Sunrise, Sunset, MapPin, Search, AlertTriangle, Sprout, TrendingUp, CloudRain, Sun, Thermometer, RefreshCw, Loader } from 'lucide-react';
+import { Cloud, Droplets, Wind, Gauge, Eye, Sunrise, Sunset, MapPin, Search, AlertTriangle, Sprout, TrendingUp, CloudRain, Sun, Thermometer, RefreshCw, Loader, Calendar } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, AreaChart, Area } from 'recharts';
 import { weatherService } from '../services/api';
 
